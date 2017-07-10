@@ -3,4 +3,4 @@ package io.gitlab.arturbosch.ksh
 /**
  * @author Artur Bosch
  */
-class ShellException : RuntimeException()
+class ShellException(msg: String) : RuntimeException(msg)

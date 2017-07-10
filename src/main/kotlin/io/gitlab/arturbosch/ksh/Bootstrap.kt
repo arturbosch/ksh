@@ -12,16 +12,19 @@ import org.jline.terminal.TerminalBuilder
 fun main(args: Array<String>) {
 	val prompt = loadPrompt() ?: throw IllegalStateException("No prompt provider found")
 	val reader = reader(prompt)
-	Bootstrap(prompt, reader).start()
+	val evaluator = DefaultResolver(loadCommands())
+	Bootstrap(prompt, reader, evaluator).start()
 }
 
-class Bootstrap(private val prompt: Prompt, private val reader: LineReader) {
+class Bootstrap(private val prompt: Prompt,
+				private val reader: LineReader,
+				private val resolver: Resolver) {
 
 	fun start() {
 		while (true) {
 			try {
 				val line = reader.readLine(prompt.message)
-				println(line)
+				resolver.evaluate(line)
 			} catch (e: ShellException) {
 				e.message?.let { println(e.message) }
 				e.cause?.let { println(e.cause) }
