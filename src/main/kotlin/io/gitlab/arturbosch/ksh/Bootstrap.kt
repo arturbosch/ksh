@@ -27,7 +27,7 @@ class Bootstrap(private val prompt: Prompt,
 		while (true) {
 			try {
 				val line = reader.readLine(prompt.message)
-				ksh.interpret(line)
+				if (!line.isNullOrBlank()) ksh.interpret(line)
 			} catch (e: ShellException) {
 				e.message?.let { println(e.message) }
 				e.cause?.let { println(e.cause) }
