@@ -10,10 +10,7 @@ data class MethodTarget(val method: Method,
 						val command: CommandProvider,
 						val args: Array<String> = emptyArray()) {
 
-	fun invoke() {
-		val result = method.invoke(command, args)
-		println(result)
-	}
+	fun invoke(): Any = method.invoke(command, *args)
 
 	companion object {
 		fun of(method: Method?,

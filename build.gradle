@@ -29,8 +29,8 @@ dependencies {
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
 	compile "org.jline:jline:$jlineVersion"
 	compile "com.beust:jcommander:$jcommanderVersion"
-	compileOnly "org.kohsuke.metainf-services:metainf-services:$metainfVersion"
 	testCompile "junit:junit:$junitVersion"
+	testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
 }
 
 //kapt {

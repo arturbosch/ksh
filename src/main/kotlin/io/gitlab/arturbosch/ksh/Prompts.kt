@@ -10,11 +10,11 @@ interface WithPriority {
 }
 
 interface Prompt : WithPriority {
-	val message: String
+	var message: String
 }
 
 class DefaultPrompt : Prompt {
-	override val message: String = "ksh> "
+	override var message: String = "ksh> "
 	override val priority: Int get() = -1
 }
 

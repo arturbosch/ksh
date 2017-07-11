@@ -1,17 +1,14 @@
-package io.gitlab.arturbosch.ksh
+package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.api.CommandProvider
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import org.kohsuke.MetaInfServices
 import java.util.ServiceLoader
 
 /**
  * @author Artur Bosch
  */
-
 @ShellClass
-@MetaInfServices
 class hello : CommandProvider {
 
 	@ShellMethod
