@@ -1,5 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
+import io.gitlab.arturbosch.ksh.resolvers.DefaultResolver
+import io.gitlab.arturbosch.ksh.resolvers.Resolver
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
@@ -24,7 +26,8 @@ class Bootstrap(private val prompt: Prompt,
 		while (true) {
 			try {
 				val line = reader.readLine(prompt.message)
-				resolver.evaluate(line)
+				val methodTarget = resolver.evaluate(line)
+				methodTarget?.invoke() ?: throw ShellException("No matching command found for $line")
 			} catch (e: ShellException) {
 				e.message?.let { println(e.message) }
 				e.cause?.let { println(e.cause) }

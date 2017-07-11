@@ -1,17 +1,18 @@
 package io.gitlab.arturbosch.ksh
 
-import org.kohsuke.MetaInfServices
 import java.util.ServiceLoader
 
 /**
  * @author Artur Bosch
  */
-interface Prompt {
-	val message: String
+interface WithPriority {
 	val priority: Int get() = 0
 }
 
-@MetaInfServices
+interface Prompt : WithPriority {
+	val message: String
+}
+
 class DefaultPrompt : Prompt {
 	override val message: String = "ksh> "
 	override val priority: Int get() = -1

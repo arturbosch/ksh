@@ -1,5 +1,5 @@
 ksh.*
-ksh_*.iml
+*.iml
 build
 .gradle
 out

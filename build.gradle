@@ -9,6 +9,7 @@ buildscript {
 
 plugins {
 	id "com.github.johnrengelman.shadow" version "1.2.3"
+//	id "org.jetbrains.kotlin.kapt" version "1.1.3-2"
 }
 
 apply plugin: 'kotlin'
@@ -23,11 +24,18 @@ repositories {
 }
 
 dependencies {
+	compile project(":ksh-api")
+//	kapt project(":ksh-processor")
 	compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
 	compile "org.jline:jline:$jlineVersion"
 	compile "com.beust:jcommander:$jcommanderVersion"
 	compileOnly "org.kohsuke.metainf-services:metainf-services:$metainfVersion"
+	testCompile "junit:junit:$junitVersion"
 }
+
+//kapt {
+//	correctErrorTypes = true
+//}
 
 compileKotlin {
 	kotlinOptions.jvmTarget = "1.8"

@@ -1,2 +1,4 @@
 rootProject.name = 'ksh'
+include 'ksh-processor'
+include 'ksh-api'
 
