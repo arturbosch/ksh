@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.resolvers
 
+import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.CommandProvider
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 
@@ -16,33 +17,33 @@ class DefaultResolver(commands: List<CommandProvider>) : Resolver(commands) {
 	private fun extractMethods(provider: CommandProvider) = provider.javaClass.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
-	private val SPACE = " "
+	override fun evaluate(input: String): MethodTarget {
+		if (input.isEmpty()) throw ShellException(null)
 
-	override fun evaluate(input: String?): MethodTarget? {
-		if (input == null || input.isBlank()) return null
-		val trimmedInput = input.trim()
+		val (className, methodName, parametersString) = destruct(input.trim())
+		val provider = nameToProvider[className] ?: throw ShellException("No matching command found!")
 
-		val (className, methodName, parametersString) = destruct(trimmedInput)
-		val provider = nameToProvider[className]
-
-		val methodResolver = MethodResolver(methodName, providerToMethods[provider] ?: emptyList())
+		val methodResolver = MethodResolver(className, methodName, providerToMethods[provider] ?: emptyList())
 		val (method, args) = methodResolver.evaluate(parametersString)
 
-		return MethodTarget.of(method, provider, args)
+
+		return MethodTarget(method, provider, args)
 	}
 
-	private fun destruct(trimmedInput: String): Triple<String, String, String> = if (trimmedInput.contains(SPACE)) {
-		val className = trimmedInput.substringBefore(SPACE)
-		val methodAndParameters = trimmedInput.substringAfter(SPACE)
+	private fun destruct(trimmedInput: String): Triple<String, String, String> =
+			if (trimmedInput.contains(SPACE)) {
+				val className = trimmedInput.substringBefore(SPACE)
+				val methodAndParameters = trimmedInput.substringAfter(SPACE)
 
-		val methodName = if (methodAndParameters.startsWith("--") || methodAndParameters.isEmpty()) {
-			"main"
-		} else {
-			methodAndParameters.substringBefore(SPACE)
-		}
+				val methodName =
+						if (methodAndParameters.startsWith(OPTION_START) || methodAndParameters.isEmpty()) {
+							MAIN_METHOD_NAME
+						} else {
+							methodAndParameters.substringBefore(SPACE)
+						}
 
-		Triple(className, methodName, methodAndParameters.substringAfter(SPACE))
-	} else {
-		Triple(trimmedInput, "main", "")
-	}
+				Triple(className, methodName, methodAndParameters.substringAfter(SPACE))
+			} else {
+				Triple(trimmedInput, MAIN_METHOD_NAME, "")
+			}
 }

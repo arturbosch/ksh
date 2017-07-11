@@ -11,16 +11,4 @@ data class MethodTarget(val method: Method,
 						val args: Array<String> = emptyArray()) {
 
 	fun invoke(): Any = method.invoke(command, *args)
-
-	companion object {
-		fun of(method: Method?,
-			   command: CommandProvider?,
-			   args: Array<String> = emptyArray()): MethodTarget? {
-			if (method == null || command == null) {
-				return null
-			} else {
-				return MethodTarget(method, command, args)
-			}
-		}
-	}
 }
