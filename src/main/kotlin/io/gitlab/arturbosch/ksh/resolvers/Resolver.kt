@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh.resolvers
 
-import io.gitlab.arturbosch.ksh.WithPriority
 import io.gitlab.arturbosch.ksh.api.ShellClass
+import io.gitlab.arturbosch.ksh.api.WithPriority
 
 /**
  * @author Artur Bosch
