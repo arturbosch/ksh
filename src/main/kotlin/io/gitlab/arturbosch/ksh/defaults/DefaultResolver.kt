@@ -1,23 +1,33 @@
-package io.gitlab.arturbosch.ksh.defaults.resolvers
+package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.defaults.DefaultMethodTarget
+import io.gitlab.arturbosch.ksh.defaults.resolvers.MAIN_METHOD_NAME
+import io.gitlab.arturbosch.ksh.defaults.resolvers.MethodResolver
+import io.gitlab.arturbosch.ksh.defaults.resolvers.OPTION_START
+import io.gitlab.arturbosch.ksh.defaults.resolvers.SPACE
 
 /**
  * @author Artur Bosch
  */
-class DefaultResolver(commands: List<ShellClass>) : Resolver(commands) {
+class DefaultResolver : Resolver() {
+
+	private lateinit var commands: List<ShellClass>
 
 	override val priority: Int = -1
 
-	private val nameToProvider = commands.map { it.javaClass.simpleName to it }.toMap()
-	private val providerToMethods = commands.map { it to extractMethods(it) }.toMap()
+	private val none = LazyThreadSafetyMode.NONE
+	private val nameToProvider by lazy(none) { commands.map { it.javaClass.simpleName to it }.toMap() }
+	private val providerToMethods by lazy(none) { commands.map { it to extractMethods(it) }.toMap() }
 
 	private fun extractMethods(provider: ShellClass) = provider.javaClass.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
+
+	override fun init(commands: List<ShellClass>) {
+		this.commands = commands
+	}
 
 	override fun evaluate(input: String): DefaultMethodTarget {
 		if (input.isEmpty()) throw ShellException(null)

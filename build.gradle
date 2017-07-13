@@ -13,7 +13,7 @@ plugins {
 
 apply plugin: 'application'
 
-mainClassName = 'io.gitlab.arturbosch.ksh.BootstrapKt'
+mainClassName = 'io.gitlab.arturbosch.ksh.MainKt'
 
 dependencies {
 	compile project(":ksh-api")

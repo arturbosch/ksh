@@ -8,5 +8,5 @@ import io.gitlab.arturbosch.ksh.api.Prompt
 
 class DefaultPrompt : Prompt {
 	override var message: String = "ksh> "
-	override val priority: Int get() = -1
+	override val priority: Int = -1
 }
