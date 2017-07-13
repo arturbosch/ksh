@@ -26,6 +26,7 @@ allprojects {
 	version "$kshVersion"
 
 	apply plugin: 'kotlin'
+	apply plugin: 'maven'
 
 	repositories {
 		mavenCentral()
@@ -45,11 +46,5 @@ allprojects {
 	compileTestKotlin {
 		kotlinOptions.jvmTarget = "1.8"
 	}
-
-}
-
-subprojects {
-
-	apply plugin: 'maven'
 
 }
