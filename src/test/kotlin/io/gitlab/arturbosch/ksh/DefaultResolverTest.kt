@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
 import io.gitlab.arturbosch.ksh.commands.hello
-import io.gitlab.arturbosch.ksh.resolvers.DefaultResolver
+import io.gitlab.arturbosch.ksh.defaults.resolvers.DefaultResolver
 import org.junit.Test
 import kotlin.test.assertEquals
 

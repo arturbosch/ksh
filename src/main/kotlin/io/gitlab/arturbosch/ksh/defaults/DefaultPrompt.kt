@@ -1,4 +1,4 @@
-package io.gitlab.arturbosch.ksh.internal
+package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.Prompt
 

@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.commands.loadCommands
-import io.gitlab.arturbosch.ksh.resolvers.DefaultResolver
+import io.gitlab.arturbosch.ksh.api.Prompt
+import io.gitlab.arturbosch.ksh.defaults.resolvers.DefaultResolver
 import org.jline.reader.EndOfFileException
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder

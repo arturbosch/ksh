@@ -1,8 +1,10 @@
-package io.gitlab.arturbosch.ksh.resolvers
+package io.gitlab.arturbosch.ksh.defaults.resolvers
 
 import io.gitlab.arturbosch.ksh.ShellException
+import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
+import io.gitlab.arturbosch.ksh.defaults.DefaultMethodTarget
 
 /**
  * @author Artur Bosch
@@ -17,7 +19,7 @@ class DefaultResolver(commands: List<ShellClass>) : Resolver(commands) {
 	private fun extractMethods(provider: ShellClass) = provider.javaClass.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
-	override fun evaluate(input: String): MethodTarget {
+	override fun evaluate(input: String): DefaultMethodTarget {
 		if (input.isEmpty()) throw ShellException(null)
 
 		val (className, methodName, parametersString) = destruct(input.trim())
@@ -27,7 +29,7 @@ class DefaultResolver(commands: List<ShellClass>) : Resolver(commands) {
 		val (method, args) = methodResolver.evaluate(parametersString)
 
 
-		return MethodTarget(method, provider, args)
+		return DefaultMethodTarget(method, provider, args)
 	}
 
 	private fun destruct(trimmedInput: String): Triple<String, String, String> =

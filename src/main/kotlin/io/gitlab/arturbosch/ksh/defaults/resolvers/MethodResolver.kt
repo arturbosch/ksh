@@ -1,4 +1,4 @@
-package io.gitlab.arturbosch.ksh.resolvers
+package io.gitlab.arturbosch.ksh.defaults.resolvers
 
 import io.gitlab.arturbosch.ksh.ShellException
 import java.lang.reflect.Method

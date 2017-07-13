@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.resolvers.Resolver
+import io.gitlab.arturbosch.ksh.api.Resolver
 
 /**
  * @author Artur Bosch
