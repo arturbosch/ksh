@@ -12,7 +12,7 @@ class DefaultResolverTest {
 
 	@Test
 	fun resolveMainMethod() {
-		val resolver = DefaultResolver(listOf(hello()))
+		val resolver = DefaultResolver().init(listOf(hello()))
 		val methodTarget = resolver.evaluate("hello")
 		val actual = methodTarget.invoke()
 

@@ -12,7 +12,7 @@ import io.gitlab.arturbosch.ksh.defaults.resolvers.SPACE
 /**
  * @author Artur Bosch
  */
-class DefaultResolver : Resolver() {
+class DefaultResolver : Resolver {
 
 	private lateinit var commands: List<ShellClass>
 
@@ -25,8 +25,9 @@ class DefaultResolver : Resolver() {
 	private fun extractMethods(provider: ShellClass) = provider.javaClass.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
-	override fun init(commands: List<ShellClass>) {
+	override fun init(commands: List<ShellClass>): Resolver {
 		this.commands = commands
+		return this
 	}
 
 	override fun evaluate(input: String): DefaultMethodTarget {

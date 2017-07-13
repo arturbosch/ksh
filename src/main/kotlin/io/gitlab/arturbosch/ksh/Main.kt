@@ -11,12 +11,13 @@ fun main(args: Array<String>) {
 		val prompt = createPrompt()
 		val terminal = createTerminal()
 		val lineReader = createLineReader(prompt, terminal)
-		val resolver = createResolver()
 
 		val commands = loadCommands()
-		resolver.init(commands)
+		val kShellContext = DefaultKShellContext(prompt, lineReader, terminal)
+		commands.forEach { it.init(kShellContext) }
 
-		Bootstrap(prompt, lineReader, resolver)
-				.start()
+		val resolver = createResolver().init(commands)
+		val kShell = KShell(prompt, lineReader, resolver)
+		Bootstrap(kShell).start()
 	}
 }

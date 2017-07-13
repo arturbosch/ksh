@@ -1,22 +1,17 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.api.Prompt
-import io.gitlab.arturbosch.ksh.api.Resolver
 import org.jline.reader.EndOfFileException
-import org.jline.reader.LineReader
 import org.jline.reader.UserInterruptException
 
 /**
  * @author Artur Bosch
  */
-class Bootstrap(private val prompt: Prompt,
-				private val reader: LineReader,
-				private val resolver: Resolver) {
+class Bootstrap(private val kShell: KShell) {
 
 	fun start() {
 		while (true) {
 			try {
-				val line = reader.readLine(prompt.message)
+				val line = kShell.readLine(kShell.message)
 				if (!line.isNullOrBlank()) interpret(line)
 			} catch (e: ShellException) {
 				e.message?.let { println(e.message) }
@@ -30,7 +25,7 @@ class Bootstrap(private val prompt: Prompt,
 	}
 
 	fun interpret(line: String) {
-		val methodTarget = resolver.evaluate(line)
+		val methodTarget = kShell.evaluate(line)
 		val result = methodTarget.invoke()
 		println(result)
 	}

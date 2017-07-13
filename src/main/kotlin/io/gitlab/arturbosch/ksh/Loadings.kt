@@ -11,12 +11,14 @@ import java.util.ServiceLoader
  * @author Artur Bosch
  */
 
-val kshLoader: ClassLoader = Ksh::class.java.classLoader
+val kshLoader: ClassLoader = KShell::class.java.classLoader
 
 fun loadShellContext() = ServiceLoader.load(ShellContext::class.java, kshLoader).firstPrioritized()
 fun loadPrompt() = ServiceLoader.load(Prompt::class.java, kshLoader).firstPrioritized()
 fun loadCommands() = ServiceLoader.load(ShellClass::class.java, kshLoader).toList()
 fun loadResolver() = ServiceLoader.load(Resolver::class.java, kshLoader).firstPrioritized()
 
-private fun <T : WithPriority> ServiceLoader<T>.firstPrioritized(): T?
-		= sortedBy { it.priority }.reversed().firstOrNull()
+private fun <T : WithPriority> ServiceLoader<T>.firstPrioritized(): T? = sortedBy { it.priority }
+		.reversed()
+		.onEach { println(it.javaClass.name) }
+		.firstOrNull()
