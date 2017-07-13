@@ -14,7 +14,7 @@ class DefaultResolverTest {
 	fun resolveMainMethod() {
 		val resolver = DefaultResolver(listOf(hello()))
 		val methodTarget = resolver.evaluate("hello")
-		val actual = methodTarget?.invoke()
+		val actual = methodTarget.invoke()
 
 		assertEquals("Hello World!", actual)
 	}

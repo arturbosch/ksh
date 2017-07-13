@@ -1,6 +1,5 @@
 package io.gitlab.arturbosch.ksh.commands
 
-import io.gitlab.arturbosch.ksh.api.CommandProvider
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import java.time.LocalDate
@@ -9,8 +8,7 @@ import java.time.LocalDateTime
 /**
  * @author Artur Bosch
  */
-@ShellClass
-class system : CommandProvider {
+class system : ShellClass {
 
 	@ShellMethod
 	fun date(): String = LocalDate.now().toString()

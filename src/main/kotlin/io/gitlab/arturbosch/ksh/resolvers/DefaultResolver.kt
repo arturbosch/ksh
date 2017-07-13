@@ -1,20 +1,20 @@
 package io.gitlab.arturbosch.ksh.resolvers
 
 import io.gitlab.arturbosch.ksh.ShellException
-import io.gitlab.arturbosch.ksh.api.CommandProvider
+import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 
 /**
  * @author Artur Bosch
  */
-class DefaultResolver(commands: List<CommandProvider>) : Resolver(commands) {
+class DefaultResolver(commands: List<ShellClass>) : Resolver(commands) {
 
 	override val priority: Int = -1
 
 	private val nameToProvider = commands.map { it.javaClass.simpleName to it }.toMap()
 	private val providerToMethods = commands.map { it to extractMethods(it) }.toMap()
 
-	private fun extractMethods(provider: CommandProvider) = provider.javaClass.declaredMethods
+	private fun extractMethods(provider: ShellClass) = provider.javaClass.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
 	override fun evaluate(input: String): MethodTarget {

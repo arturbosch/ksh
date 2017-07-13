@@ -12,20 +12,13 @@ plugins {
 }
 
 apply plugin: 'application'
-apply plugin: 'kotlin'
-//apply plugin: 'kotlin-kapt'
 
 mainClassName = 'io.gitlab.arturbosch.ksh.BootstrapKt'
 
 dependencies {
 	compile project(":ksh-api")
-	kapt project(":ksh-processor")
 	compile "org.jline:jline:$jlineVersion"
 	compile "com.beust:jcommander:$jcommanderVersion"
-}
-
-kapt {
-	generateStubs = true
 }
 
 allprojects {
