@@ -6,4 +6,4 @@ import java.lang.reflect.Method
  * @author Artur Bosch
  */
 data class MethodSignature(val method: Method,
-						   val args: Array<String> = emptyArray())
+						   val args: Array<Any> = emptyArray())

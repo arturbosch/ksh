@@ -5,5 +5,5 @@ package io.gitlab.arturbosch.ksh.api
  */
 interface MethodTarget {
 
-	fun invoke(): Any
+	fun invoke(): Any?
 }

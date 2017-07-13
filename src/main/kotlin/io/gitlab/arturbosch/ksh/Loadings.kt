@@ -20,5 +20,4 @@ fun loadResolver() = ServiceLoader.load(Resolver::class.java, kshLoader).firstPr
 
 private fun <T : WithPriority> ServiceLoader<T>.firstPrioritized(): T? = sortedBy { it.priority }
 		.reversed()
-		.onEach { println(it.javaClass.name) }
 		.firstOrNull()
