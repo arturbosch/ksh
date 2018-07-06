@@ -17,11 +17,17 @@ class DefaultShellContext : ShellContext {
 
 	override val priority: Int = -1
 
-	override fun createPrompt(): Prompt = loadPrompt() ?: throw IllegalStateException("No prompt provider found!")
-	override fun createResolver(): Resolver = loadResolver() ?: throw IllegalStateException("No resolver found!")
+	override fun createPrompt(): Prompt =
+			loadPrompt() ?: throw IllegalStateException("No prompt provider found!")
+
+	override fun createResolver(): Resolver =
+			loadResolver() ?: throw IllegalStateException("No resolver found!")
+
 	override fun createTerminal(): Terminal = TerminalBuilder.terminal()
-	override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader = LineReaderBuilder.builder()
-			.appName(prompt.message)
-			.terminal(terminal)
-			.build()
+
+	override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader =
+			LineReaderBuilder.builder()
+					.appName(prompt.message)
+					.terminal(terminal)
+					.build()
 }

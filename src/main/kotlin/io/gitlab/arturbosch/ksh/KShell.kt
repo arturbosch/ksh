@@ -9,9 +9,9 @@ import org.jline.terminal.Terminal
 /**
  * @author Artur Bosch
  */
-class KShell(val prompt: Prompt,
-			 val lineReader: LineReader,
-			 val resolver: Resolver) :
+class KShell(private val prompt: Prompt,
+			 private val lineReader: LineReader,
+			 private val resolver: Resolver) :
 		Resolver by resolver,
 		LineReader by lineReader,
 		Prompt by prompt {

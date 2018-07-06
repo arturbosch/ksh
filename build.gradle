@@ -8,7 +8,8 @@ buildscript {
 }
 
 plugins {
-	id "com.github.johnrengelman.shadow" version "1.2.3"
+	id "com.github.johnrengelman.shadow" version "2.0.4"
+	id 'com.github.ben-manes.versions' version '0.20.0'
 }
 
 apply plugin: 'application'
@@ -34,7 +35,7 @@ allprojects {
 	}
 
 	dependencies {
-		compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlinVersion"
+		compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 		testCompile "junit:junit:$junitVersion"
 		testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
 	}

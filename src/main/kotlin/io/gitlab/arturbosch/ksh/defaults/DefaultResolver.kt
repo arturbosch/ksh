@@ -8,21 +8,23 @@ import io.gitlab.arturbosch.ksh.defaults.resolvers.MAIN_METHOD_NAME
 import io.gitlab.arturbosch.ksh.defaults.resolvers.MethodResolver
 import io.gitlab.arturbosch.ksh.defaults.resolvers.OPTION_START
 import io.gitlab.arturbosch.ksh.defaults.resolvers.SPACE
+import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
  */
 class DefaultResolver : Resolver {
 
-	private lateinit var commands: List<ShellClass>
-
 	override val priority: Int = -1
 
+	private var commands: List<ShellClass> by Delegates.notNull()
+
 	private val none = LazyThreadSafetyMode.NONE
-	private val nameToProvider by lazy(none) { commands.map { it.javaClass.simpleName to it }.toMap() }
+	private val nameToProvider by lazy(none) { commands.map { it.commandId to it }.toMap() }
 	private val providerToMethods by lazy(none) { commands.map { it to extractMethods(it) }.toMap() }
 
-	private fun extractMethods(provider: ShellClass) = provider.javaClass.declaredMethods
+	private fun extractMethods(provider: ShellClass) = provider.javaClass
+			.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
 	override fun init(commands: List<ShellClass>): Resolver {

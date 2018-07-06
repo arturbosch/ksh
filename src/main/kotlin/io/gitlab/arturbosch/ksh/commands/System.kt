@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 /**
  * @author Artur Bosch
  */
-class system : ShellClass {
+class System : ShellClass {
 
 	@ShellMethod
 	fun date(): String = LocalDate.now().toString()

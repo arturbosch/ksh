@@ -24,10 +24,9 @@ class Bootstrap(private val kShell: KShell) {
 		}
 	}
 
-	fun interpret(line: String) {
+	private fun interpret(line: String) {
 		val methodTarget = kShell.evaluate(line)
 		val result = methodTarget.invoke()
 		result?.let { println(result) }
 	}
-
 }

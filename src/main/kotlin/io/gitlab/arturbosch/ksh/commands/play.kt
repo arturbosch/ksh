@@ -23,7 +23,7 @@ class play : ShellClass {
 		var tries: String? = null
 	}
 
-	private val random = Random(System.currentTimeMillis())
+	private val random = Random(java.lang.System.currentTimeMillis())
 
 	@ShellMethod
 	fun guess(game: Game) {
