@@ -2,6 +2,7 @@ package io.gitlab.arturbosch.ksh
 
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
+import java.lang.reflect.InvocationTargetException
 
 /**
  * @author Artur Bosch
@@ -12,7 +13,13 @@ class Bootstrap(private val kShell: KShell) {
 		while (true) {
 			try {
 				val line = kShell.readLine(kShell.message)
-				if (!line.isNullOrBlank()) interpret(line)
+				if (!line.isNullOrBlank()) {
+					try { // reflection protection
+						interpret(line)
+					} catch (e: InvocationTargetException) {
+						throw e.targetException
+					}
+				}
 			} catch (e: ShellException) {
 				e.message?.let { println(e.message) }
 				e.cause?.let { println(e.cause) }
