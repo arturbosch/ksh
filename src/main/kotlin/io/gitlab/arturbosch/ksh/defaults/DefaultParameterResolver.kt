@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.api.ShellOptions
@@ -10,9 +11,11 @@ import java.lang.reflect.Parameter
 /**
  * @author Artur Bosch
  */
-class DefaultParameterResolver {
+class DefaultParameterResolver : ParameterResolver {
 
-	fun evaluate(method: Method, rawParameterInput: String): List<Any?> {
+	override fun supports(parameter: Parameter): Boolean = true
+
+	override fun evaluate(method: Method, rawParameterInput: String): List<Any?> {
 		val prefix = method.parameterPrefix()
 		val allKeys = method.parameters.flatMap { it.prefixedValues(prefix) }
 

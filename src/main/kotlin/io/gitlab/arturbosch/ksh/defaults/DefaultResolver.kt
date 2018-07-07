@@ -4,10 +4,8 @@ import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.defaults.resolvers.MAIN_METHOD_NAME
-import io.gitlab.arturbosch.ksh.defaults.resolvers.MethodResolver
-import io.gitlab.arturbosch.ksh.defaults.resolvers.OPTION_START
-import io.gitlab.arturbosch.ksh.defaults.resolvers.SPACE
+import io.gitlab.arturbosch.ksh.loadParameterResolver
+import java.lang.reflect.Method
 import kotlin.properties.Delegates
 
 /**
@@ -27,6 +25,8 @@ class DefaultResolver : Resolver {
 			.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 
+	private val parameterResolver = loadParameterResolver().first() // TODO support more
+
 	override fun init(commands: List<ShellClass>): Resolver {
 		this.commands = commands
 		return this
@@ -35,30 +35,51 @@ class DefaultResolver : Resolver {
 	override fun evaluate(input: String): DefaultMethodTarget {
 		if (input.isEmpty()) throw ShellException(null)
 
-		val (className, methodName, parametersString) = destruct(input.trim())
-		val provider = nameToProvider[className] ?: throw ShellException("No matching command found!")
+		val (className, raw) = destruct(input.trim())
+		val provider = findMatchingClass(className)
+		val (methodName, rawParameterString) = destruct(raw)
+		val method = findMatchingMethod(provider, methodName)
 
-		val methodResolver = MethodResolver(className, methodName, providerToMethods[provider] ?: emptyList())
-		val (method, args) = methodResolver.evaluate(parametersString)
+		val arguments = parameterResolver.evaluate(method, rawParameterString)
 
-
-		return DefaultMethodTarget(method, provider, args)
+		return DefaultMethodTarget(method, provider, arguments)
 	}
 
-	private fun destruct(trimmedInput: String): Triple<String, String, String> =
-			if (trimmedInput.contains(SPACE)) {
-				val className = trimmedInput.substringBefore(SPACE)
-				val methodAndParameters = trimmedInput.substringAfter(SPACE)
+	private fun findMatchingClass(name: String): ShellClass {
+		return nameToProvider[name] ?: throw ShellException("No matching command '$name' found.")
+	}
 
-				val (methodName, rawParameters) =
-						if (methodAndParameters.startsWith(OPTION_START) || methodAndParameters.isEmpty()) {
-							MAIN_METHOD_NAME to methodAndParameters
-						} else {
-							methodAndParameters.substringBefore(SPACE) to methodAndParameters.substringAfter(SPACE)
-						}
+	private fun findMatchingMethod(provider: ShellClass, name: String): Method {
+		val methods = providerToMethods[provider]
+				?: throw ShellException("'$provider' has no methods.")
 
-				Triple(className, methodName, rawParameters)
+		return methods.find { name in it.shellMethod().value.toSet() || it.name == name }
+				?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
+						"\n\tPossible options are: " + methods.joinToString(",") { it.name })
+	}
+
+	private fun destruct(line: String): Pair<String, String> =
+			if (line.contains(SPACE)) {
+				val id = line.substringBefore(SPACE)
+				val remaining = line.substringAfter(SPACE)
+
+				if (id.startsWith(OPTION_START)) {
+					MAIN_METHOD_NAME to line
+				} else {
+					id to remaining
+				}
 			} else {
-				Triple(trimmedInput, MAIN_METHOD_NAME, "")
+				when {
+					line.startsWith(OPTION_START) -> MAIN_METHOD_NAME to line
+					line.isEmpty() -> MAIN_METHOD_NAME to ""
+					else -> line to ""
+				}
 			}
 }
+
+fun Method.shellMethod() = getAnnotation(ShellMethod::class.java)
+		?: throw IllegalStateException("ShellMethod annotation expected.")
+
+const val SPACE = " "
+const val OPTION_START = "-"
+const val MAIN_METHOD_NAME = "main"

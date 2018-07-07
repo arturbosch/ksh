@@ -19,7 +19,6 @@ mainClassName = 'io.gitlab.arturbosch.ksh.MainKt'
 dependencies {
 	compile project(":ksh-api")
 	compile "org.jline:jline:$jlineVersion"
-	compile "com.beust:jcommander:$jcommanderVersion"
 }
 
 allprojects {
@@ -40,7 +39,7 @@ allprojects {
 		testCompile "com.willowtreeapps.assertk:assertk:$assertkVersion"
 		testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 		testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-		testCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+		testCompile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 	}
 
 	compileKotlin {
