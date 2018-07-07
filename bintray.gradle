@@ -1,0 +1,29 @@
+bintray {
+	user = System.getenv("BINTRAY_USER") ?: ""
+	key = System.getenv("BINTRAY_API_KEY") ?: ""
+	publications = ["ksh"]
+
+	pkg {
+		repo = 'generic'
+		name = 'ksh'
+		userOrg = 'arturbosch'
+		licenses = ['Apache-2.0']
+		vcsUrl = "https://github.com/arturbosch/ksh"
+
+		version {
+			name = project.version
+			released = new Date()
+		}
+	}
+}
+
+publishing {
+	publications {
+		ksh(MavenPublication) {
+			from components.java
+			groupId project.group
+			artifactId project.name
+			version project.version
+		}
+	}
+}
