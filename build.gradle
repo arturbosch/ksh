@@ -38,6 +38,7 @@ allprojects {
 		compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 		testCompile "junit:junit:$junitVersion"
 		testCompile "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
+		testCompile "com.willowtreeapps.assertk:assertk:$assertkVersion"
 	}
 
 	compileKotlin {

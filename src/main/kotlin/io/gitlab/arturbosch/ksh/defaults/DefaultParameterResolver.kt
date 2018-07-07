@@ -3,6 +3,7 @@ package io.gitlab.arturbosch.ksh.defaults
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.api.ShellOptions
+import io.gitlab.arturbosch.ksh.converters.convert
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 
@@ -11,7 +12,7 @@ import java.lang.reflect.Parameter
  */
 class DefaultParameterResolver {
 
-	fun evaluate(method: Method, rawParameterInput: String): List<Any> {
+	fun evaluate(method: Method, rawParameterInput: String): List<Any?> {
 		val prefix = method.parameterPrefix()
 		val allKeys = method.parameters.flatMap { it.prefixedValues(prefix) }
 
@@ -31,17 +32,21 @@ class DefaultParameterResolver {
 			}
 		}
 
-		val arguments = mutableListOf<Any>()
+		val arguments = mutableListOf<Any?>()
 		for (parameter in method.parameters) {
 			val methodParameter = methodParameters[parameter]
 			if (methodParameter != null) {
 				val (_, values, _) = methodParameter
-				val argument: Any = when (values.size) {
-					0 -> true
+				val argument: String = when (values.size) {
+					0 -> "true"
 					1 -> values[0]
-					else -> values
+					else -> values.joinToString("; ")
 				}
-				arguments.add(argument)
+				val convertedArgument = convert(parameter, argument)
+				arguments.add(convertedArgument)
+			} else {
+				val convertedArgument = convert(parameter, parameter.defaultValue())
+				arguments.add(convertedArgument)
 			}
 		}
 
@@ -75,10 +80,14 @@ fun Parameter.hasBoolType() =
 		type == Boolean::class.javaPrimitiveType || type == Boolean::class.java
 
 fun Parameter.prefixedValues(prefix: String): Set<String> {
-	val option = getAnnotation(ShellOption::class.java)
+	val option = shellOption
 	return if (option != null && option.value.isNotEmpty()) {
 		option.value.toSet()
 	} else {
 		setOf(prefix + name)
 	}
 }
+
+val Parameter.shellOption: ShellOption? get() = getAnnotation(ShellOption::class.java)
+
+fun Parameter.defaultValue(): String = shellOption?.defaultValue ?: ShellOptions.NULL_DEFAULT

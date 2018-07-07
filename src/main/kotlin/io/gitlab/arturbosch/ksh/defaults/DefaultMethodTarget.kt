@@ -9,7 +9,7 @@ import java.lang.reflect.Method
  */
 data class DefaultMethodTarget(val method: Method,
 							   val command: ShellClass,
-							   val args: List<Any> = emptyList()) : MethodTarget {
+							   val args: List<Any?> = emptyList()) : MethodTarget {
 
 	override fun invoke(): Any? {
 		println("Invoking '${method.name}' on '${command.javaClass.simpleName}' with args='$args'")

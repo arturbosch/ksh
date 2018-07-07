@@ -5,5 +5,5 @@ package io.gitlab.arturbosch.ksh.defaults.resolvers
  */
 
 const val SPACE = " "
-const val OPTION_START = "--"
+const val OPTION_START = "-"
 const val MAIN_METHOD_NAME = "main"
