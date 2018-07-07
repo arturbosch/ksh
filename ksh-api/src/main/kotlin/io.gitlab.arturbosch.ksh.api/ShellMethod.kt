@@ -5,4 +5,7 @@ package io.gitlab.arturbosch.ksh.api
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FUNCTION)
-annotation class ShellMethod
+annotation class ShellMethod(
+		val value: Array<String> = [],
+		val help: String = "",
+		val prefix: String = "--")

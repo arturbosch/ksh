@@ -50,14 +50,14 @@ class DefaultResolver : Resolver {
 				val className = trimmedInput.substringBefore(SPACE)
 				val methodAndParameters = trimmedInput.substringAfter(SPACE)
 
-				val methodName =
+				val (methodName, rawParameters) =
 						if (methodAndParameters.startsWith(OPTION_START) || methodAndParameters.isEmpty()) {
-							MAIN_METHOD_NAME
+							MAIN_METHOD_NAME to methodAndParameters
 						} else {
-							methodAndParameters.substringBefore(SPACE)
+							methodAndParameters.substringBefore(SPACE) to methodAndParameters.substringAfter(SPACE)
 						}
 
-				Triple(className, methodName, methodAndParameters.substringAfter(SPACE))
+				Triple(className, methodName, rawParameters)
 			} else {
 				Triple(trimmedInput, MAIN_METHOD_NAME, "")
 			}

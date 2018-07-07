@@ -2,6 +2,7 @@ package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
+import io.gitlab.arturbosch.ksh.api.ShellOption
 
 /**
  * @author Artur Bosch
@@ -9,5 +10,5 @@ import io.gitlab.arturbosch.ksh.api.ShellMethod
 class hello : ShellClass {
 
 	@ShellMethod
-	fun main(): String = "Hello World!"
+	fun main(@ShellOption(["--name", "-n"]) name: String?): String = "Hello ${name ?: "World"}!"
 }
