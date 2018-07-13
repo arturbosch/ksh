@@ -8,5 +8,6 @@ import io.gitlab.arturbosch.ksh.api.context.KShellContext
 interface ShellClass {
 
 	val commandId: String get() = this.javaClass.simpleName.toLowerCase()
+
 	fun init(context: KShellContext) {}
 }

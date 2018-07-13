@@ -5,5 +5,7 @@ package io.gitlab.arturbosch.ksh.api
  */
 interface Prompt : WithPriority {
 
-	var message: String
+	val applicationName: String
+
+	fun message(): String
 }

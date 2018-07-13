@@ -5,8 +5,9 @@ import io.gitlab.arturbosch.ksh.api.Prompt
 /**
  * @author Artur Bosch
  */
-
 class DefaultPrompt : Prompt {
-	override var message: String = "ksh> "
+
+	override val applicationName: String = "ksh"
 	override val priority: Int = -1
+	override fun message(): String = "ksh> "
 }

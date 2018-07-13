@@ -27,7 +27,7 @@ class DefaultShellContext : ShellContext {
 
 	override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader =
 			LineReaderBuilder.builder()
-					.appName(prompt.message)
+					.appName(prompt.applicationName)
 					.terminal(terminal)
 					.build()
 }

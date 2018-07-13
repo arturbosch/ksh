@@ -7,7 +7,7 @@ import org.jline.reader.EndOfFileException
 /**
  * @author Artur Bosch
  */
-class exit : ShellClass {
+class Exit : ShellClass {
 
 	@ShellMethod
 	fun main() {
