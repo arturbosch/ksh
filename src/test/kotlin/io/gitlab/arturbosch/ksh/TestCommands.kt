@@ -5,21 +5,27 @@ import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import java.io.File
 
-class hello : ShellClass {
+class Hello : ShellClass {
+
+	override val commandId: String = "hello"
 
 	@ShellMethod
-	fun main(@ShellOption(["--name", "-n"]) name: String?): String =
+	fun main(@ShellOption(["--name", "-n", ""]) name: String?): String =
 			"Hello ${name ?: "World"}!"
 
 	@ShellMethod
-	fun say(@ShellOption(["--name", "-n"], defaultValue = "OMG") name: String): String =
+	fun say(@ShellOption(["--name", "-n", ""], defaultValue = "OMG") name: String): String =
 			"Hello $name!"
 
 	@ShellMethod
-	fun count(@ShellOption(["--name", "-n"], defaultValue = "OMG") name: String,
+	fun count(@ShellOption(["--name", "-n", ""], defaultValue = "OMG") name: String,
 			  @ShellOption(["--times"], defaultValue = "3") amount: Int): String {
 		return "Hello " + (1..amount).joinToString("") { name }
 	}
+
+	@ShellMethod
+	fun invalid(@ShellOption([""]) name: String,
+				@ShellOption([""]) age: Int): String = "Hello $name - $age"
 }
 
 class Conversions : ShellClass {

@@ -10,7 +10,13 @@ import org.junit.Test
 class DefaultResolverTest {
 
 	private val resolver = DefaultResolver()
-			.init(listOf(hello(), Conversions()))
+			.init(listOf(Hello(), Conversions()))
+
+	@Test
+	fun resolveMainWithOneOptionIdLessParameter() {
+		val target = resolver.evaluate("hello Artur")
+		assertk.assert(target.invoke()).isEqualTo("Hello Artur!")
+	}
 
 	@Test
 	fun resolveMainWithOneParameter() {
@@ -59,5 +65,11 @@ class DefaultResolverTest {
 		val command = "conversions -file /home/test -i 5 -b -f 2.0f -d 5.0 -s bla"
 		val target = resolver.evaluate(command)
 		assertk.assert(target.invoke()).isEqualTo("5 2.0 true 5.0 bla /home/test")
+	}
+
+	@Test
+	fun resolveTwoUnnamedParameters() {
+		val target = resolver.evaluate("hello invalid Artur 25")
+		assertk.assert(target.invoke()).isEqualTo("Hello Artur - 25")
 	}
 }

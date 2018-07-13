@@ -1,6 +1,8 @@
 package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.ShellException
+import io.gitlab.arturbosch.ksh.api.CallTarget
+import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
@@ -24,6 +26,7 @@ class DefaultResolver : Resolver {
 	private fun extractMethods(provider: ShellClass) = provider.javaClass
 			.declaredMethods
 			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
+			.map { it.toShellMethod() }
 
 	private val parameterResolver = loadParameterResolver().first() // TODO support more
 
@@ -32,28 +35,47 @@ class DefaultResolver : Resolver {
 		return this
 	}
 
-	override fun evaluate(input: String): DefaultMethodTarget {
+	override fun evaluate(input: String): CallTarget {
 		if (input.isEmpty()) throw ShellException(null)
 
 		val (className, raw) = destruct(input.trim())
 		val provider = findMatchingClass(className)
 		val (methodName, rawParameterString) = destruct(raw)
-		val method = findMatchingMethod(provider, methodName)
+		val (methodTarget, optionless) = findMatchingMethod(provider, methodName)
 
-		val arguments = parameterResolver.evaluate(method, rawParameterString)
+		// no method specified, invoking main with optionless parameter
+		val arguments = if (optionless) {
+			parameterResolver.evaluate(methodTarget, "$methodName $rawParameterString")
+		} else {
+			parameterResolver.evaluate(methodTarget, rawParameterString)
+		}
 
-		return DefaultMethodTarget(method, provider, arguments)
+		return CallTarget(provider, methodTarget, arguments)
 	}
 
 	private fun findMatchingClass(name: String): ShellClass {
 		return nameToProvider[name] ?: throw ShellException("No matching command '$name' found.")
 	}
 
-	private fun findMatchingMethod(provider: ShellClass, name: String): Method {
+	private fun findMatchingMethod(provider: ShellClass,
+								   name: String): Pair<MethodTarget, Boolean> {
+
 		val methods = providerToMethods[provider]
 				?: throw ShellException("'$provider' has no methods.")
 
-		return methods.find { name in it.shellMethod().value.toSet() || it.name == name }
+		var searchedMethod: MethodTarget? = null
+		var mainMethod: MethodTarget? = null
+		for (shellMethod in methods) {
+			if (shellMethod.isMain) {
+				mainMethod = shellMethod
+			}
+			if (shellMethod.hasValue(name)) {
+				searchedMethod = shellMethod
+			}
+		}
+
+		return searchedMethod?.let { it to false }
+				?: mainMethod?.let { it to true }
 				?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
 						"\n\tPossible options are: " + methods.joinToString(",") { it.name })
 	}

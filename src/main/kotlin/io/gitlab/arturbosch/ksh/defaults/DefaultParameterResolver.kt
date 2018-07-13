@@ -1,11 +1,8 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
-import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.api.ShellOption
-import io.gitlab.arturbosch.ksh.api.ShellOptions
 import io.gitlab.arturbosch.ksh.converters.convert
-import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 
 /**
@@ -13,18 +10,22 @@ import java.lang.reflect.Parameter
  */
 class DefaultParameterResolver : ParameterResolver {
 
+	data class MethodParameter(val option: String,
+							   val values: List<String>,
+							   val parameter: Parameter)
+
 	override fun supports(parameter: Parameter): Boolean = true
 
-	override fun evaluate(method: Method, rawParameterInput: String): List<Any?> {
-		val prefix = method.parameterPrefix()
-		val allKeys = method.parameters.flatMap { it.prefixedValues(prefix) }
+	override fun evaluate(methodTarget: MethodTarget, rawParameterInput: String): List<Any?> {
+		val prefix = methodTarget.method.parameterPrefix()
+		val allKeys = methodTarget.parameters.flatMap { it.prefixedValues(prefix) }
 
 		val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
-		val words = rawParameterInput.split(" ")
+		val words = rawParameterInput.split(" ").filter { it.isNotEmpty() }
 		val unusedWords = mutableSetOf<String>()
 		for ((index, word) in words.withIndex()) {
 			if (word in allKeys) {
-				val parameter = lookupParameter(method, word, prefix)
+				val parameter = methodTarget.lookupParameter(word, prefix)
 				val arity = parameter.arity()
 				val from = index + 1
 				val to = from + arity
@@ -36,7 +37,7 @@ class DefaultParameterResolver : ParameterResolver {
 		}
 
 		val arguments = mutableListOf<Any?>()
-		for (parameter in method.parameters) {
+		for (parameter in methodTarget.parameters) {
 			val methodParameter = methodParameters[parameter]
 			if (methodParameter != null) {
 				val (_, values, _) = methodParameter
@@ -48,49 +49,18 @@ class DefaultParameterResolver : ParameterResolver {
 				val convertedArgument = convert(parameter, argument)
 				arguments.add(convertedArgument)
 			} else {
-				val convertedArgument = convert(parameter, parameter.defaultValue())
+				val convertedArgument =
+						if (unusedWords.isNotEmpty() && parameter.isUnnamedOption()) {
+							val word = unusedWords.first()
+							unusedWords.remove(word)
+							convert(parameter, word)
+						} else {
+							convert(parameter, parameter.defaultValue())
+						}
 				arguments.add(convertedArgument)
 			}
 		}
 
 		return arguments
 	}
-
-	private fun lookupParameter(method: Method, word: String, prefix: String): Parameter {
-		for (parameter in method.parameters) {
-			if (parameter.prefixedValues(prefix).any { it == word }) {
-				return parameter
-			}
-		}
-		throw IllegalArgumentException("Could not look up parameter for '$prefix$word' in $method")
-	}
 }
-
-data class MethodParameter(val option: String,
-						   val values: List<String>,
-						   val parameter: Parameter)
-
-fun Method.parameterPrefix() = getAnnotation(ShellMethod::class.java)?.prefix
-		?: throw IllegalStateException("Method with ShellMethod annotation expected.")
-
-fun Parameter.arity(): Int {
-	val option = getAnnotation(ShellOption::class.java)
-	val inferred = if (hasBoolType()) 0 else 1
-	return if (option != null && option.arity != ShellOptions.EXTRACT_ARITY) option.arity else inferred
-}
-
-fun Parameter.hasBoolType() =
-		type == Boolean::class.javaPrimitiveType || type == Boolean::class.java
-
-fun Parameter.prefixedValues(prefix: String): Set<String> {
-	val option = shellOption
-	return if (option != null && option.value.isNotEmpty()) {
-		option.value.toSet()
-	} else {
-		setOf(prefix + name)
-	}
-}
-
-val Parameter.shellOption: ShellOption? get() = getAnnotation(ShellOption::class.java)
-
-fun Parameter.defaultValue(): String = shellOption?.defaultValue ?: ShellOptions.NULL_DEFAULT
