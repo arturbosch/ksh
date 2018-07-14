@@ -17,7 +17,7 @@ class Clear : ShellClass {
 		terminal = context.terminal
 	}
 
-	@ShellMethod
+	@ShellMethod(help = "Clears the terminal.")
 	fun main() {
 		terminal?.puts(InfoCmp.Capability.clear_screen)
 				?: throw IllegalStateException("no terminal instance")

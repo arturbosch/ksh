@@ -10,9 +10,11 @@ import java.time.LocalDateTime
  */
 class System : ShellClass {
 
-	@ShellMethod
+	override val help: String = "Provides different system utils."
+
+	@ShellMethod(help = "Prints the current date.")
 	fun date(): String = LocalDate.now().toString()
 
-	@ShellMethod
+	@ShellMethod(help = "Prints the current time.")
 	fun time(): String = LocalDateTime.now().toString()
 }

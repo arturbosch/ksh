@@ -6,7 +6,6 @@ import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
-import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.loadParameterResolver
 import kotlin.properties.Delegates
 
@@ -21,12 +20,7 @@ open class DefaultResolver : Resolver {
 
 	private val none = LazyThreadSafetyMode.NONE
 	private val nameToProvider by lazy(none) { commands.map { it.commandId to it }.toMap() }
-	private val providerToMethods by lazy(none) { commands.map { it to extractMethods(it) }.toMap() }
-
-	private fun extractMethods(provider: ShellClass) = provider.javaClass
-			.declaredMethods
-			.filter { it.isAnnotationPresent(ShellMethod::class.java) }
-			.map { it.toShellMethod() }
+	private val providerToMethods by lazy(none) { commands.map { it to it.extractMethods() }.toMap() }
 
 	private val parameterResolver = loadParameterResolver().first() // TODO support more
 

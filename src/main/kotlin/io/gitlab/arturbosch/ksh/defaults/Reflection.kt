@@ -1,6 +1,7 @@
 package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.MethodTarget
+import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.api.ShellOptions
@@ -13,6 +14,11 @@ val Parameter.shellOption: ShellOption? get() = getAnnotation(ShellOption::class
 fun Parameter.defaultValue(): String = shellOption?.defaultValue ?: ShellOptions.NULL_DEFAULT
 
 fun Parameter.isUnnamedOption(): Boolean = shellOption?.value?.let { "" in it } ?: false
+
+fun ShellClass.extractMethods() = javaClass
+		.declaredMethods
+		.filter { it.isAnnotationPresent(ShellMethod::class.java) }
+		.map { it.toShellMethod() }
 
 fun Method.parameterPrefix() = getAnnotation(ShellMethod::class.java)?.prefix
 		?: throw IllegalStateException("Method with ShellMethod annotation expected.")
