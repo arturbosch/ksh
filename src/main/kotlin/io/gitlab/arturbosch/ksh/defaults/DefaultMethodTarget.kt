@@ -2,6 +2,7 @@ package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
+import io.gitlab.arturbosch.ksh.api.ShellMethod
 import java.lang.reflect.Method
 
 /**
@@ -25,3 +26,6 @@ fun Method.toShellMethod(): MethodTarget {
 	val optionless = values.isEmpty() || "" in values
 	return DefaultMethodTarget(values, this, isMain, optionless)
 }
+
+fun Method.shellMethod(): ShellMethod = getAnnotation(ShellMethod::class.java)
+		?: throw IllegalStateException("method '${this.name}' misses shell annotation")

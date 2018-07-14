@@ -1,2 +1,3 @@
 io.gitlab.arturbosch.ksh.commands.System
 io.gitlab.arturbosch.ksh.commands.Exit
+io.gitlab.arturbosch.ksh.commands.Clear

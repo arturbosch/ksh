@@ -8,6 +8,7 @@ import io.gitlab.arturbosch.ksh.api.Prompt
 class DefaultPrompt : Prompt {
 
 	override val applicationName: String = "ksh"
+	override val historyFile: String = "./ksh-history"
 	override val priority: Int = -1
 	override fun message(): String = "ksh> "
 }

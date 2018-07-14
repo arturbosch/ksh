@@ -1,7 +1,6 @@
 package io.gitlab.arturbosch.ksh
 
 import assertk.assertions.isEqualTo
-import io.gitlab.arturbosch.ksh.defaults.DefaultResolver
 import org.junit.Test
 
 /**
@@ -9,8 +8,8 @@ import org.junit.Test
  */
 class DefaultResolverTest {
 
-	private val resolver = DefaultResolver()
-			.init(listOf(Hello(), Conversions()))
+	private val resolver = TestResolver()
+			.init(listOf(Hello(), Conversions())) as TestResolver
 
 	@Test
 	fun resolveMainWithOneOptionIdLessParameter() {

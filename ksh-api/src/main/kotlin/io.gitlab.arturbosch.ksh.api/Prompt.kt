@@ -6,6 +6,6 @@ package io.gitlab.arturbosch.ksh.api
 interface Prompt : WithPriority {
 
 	val applicationName: String
-
+	val historyFile: String
 	fun message(): String
 }

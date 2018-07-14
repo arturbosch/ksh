@@ -2,18 +2,18 @@ package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.CallTarget
+import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.loadParameterResolver
-import java.lang.reflect.Method
 import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
  */
-class DefaultResolver : Resolver {
+open class DefaultResolver : Resolver {
 
 	override val priority: Int = -1
 
@@ -35,19 +35,19 @@ class DefaultResolver : Resolver {
 		return this
 	}
 
-	override fun evaluate(input: String): CallTarget {
-		if (input.isEmpty()) throw ShellException(null)
-
-		val (className, raw) = destruct(input.trim())
+	override fun evaluate(input: InputLine): CallTarget {
+		val className = input.firstWord()
 		val provider = findMatchingClass(className)
-		val (methodName, rawParameterString) = destruct(raw)
-		val (methodTarget, optionless) = findMatchingMethod(provider, methodName)
+		val methodName = input.secondWord()
+		val (methodTarget, unnamed) =
+				findMatchingMethod(provider, methodName)
 
-		// no method specified, invoking main with optionless parameter
-		val arguments = if (optionless) {
-			parameterResolver.evaluate(methodTarget, "$methodName $rawParameterString")
+		val arguments = if (unnamed) {
+			input.markParametersStartAfter(className)
+			parameterResolver.evaluate(methodTarget, input)
 		} else {
-			parameterResolver.evaluate(methodTarget, rawParameterString)
+			input.markParametersStartAfter(methodName)
+			parameterResolver.evaluate(methodTarget, input)
 		}
 
 		return CallTarget(provider, methodTarget, arguments)
@@ -79,29 +79,4 @@ class DefaultResolver : Resolver {
 				?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
 						"\n\tPossible options are: " + methods.joinToString(",") { it.name })
 	}
-
-	private fun destruct(line: String): Pair<String, String> =
-			if (line.contains(SPACE)) {
-				val id = line.substringBefore(SPACE)
-				val remaining = line.substringAfter(SPACE)
-
-				if (id.startsWith(OPTION_START)) {
-					MAIN_METHOD_NAME to line
-				} else {
-					id to remaining
-				}
-			} else {
-				when {
-					line.startsWith(OPTION_START) -> MAIN_METHOD_NAME to line
-					line.isEmpty() -> MAIN_METHOD_NAME to ""
-					else -> line to ""
-				}
-			}
 }
-
-fun Method.shellMethod() = getAnnotation(ShellMethod::class.java)
-		?: throw IllegalStateException("ShellMethod annotation expected.")
-
-const val SPACE = " "
-const val OPTION_START = "-"
-const val MAIN_METHOD_NAME = "main"

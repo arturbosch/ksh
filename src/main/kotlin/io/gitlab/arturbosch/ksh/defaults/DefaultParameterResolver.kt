@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.converters.convert
@@ -16,12 +17,12 @@ class DefaultParameterResolver : ParameterResolver {
 
 	override fun supports(parameter: Parameter): Boolean = true
 
-	override fun evaluate(methodTarget: MethodTarget, rawParameterInput: String): List<Any?> {
+	override fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?> {
 		val prefix = methodTarget.method.parameterPrefix()
 		val allKeys = methodTarget.parameters.flatMap { it.prefixedValues(prefix) }
 
 		val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
-		val words = rawParameterInput.split(" ").filter { it.isNotEmpty() }
+		val words = input.words().subList(input.parameterStartIndex, input.size())
 		val unusedWords = mutableSetOf<String>()
 		for ((index, word) in words.withIndex()) {
 			if (word in allKeys) {

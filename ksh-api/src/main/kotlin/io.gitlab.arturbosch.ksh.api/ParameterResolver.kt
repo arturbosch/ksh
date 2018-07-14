@@ -8,5 +8,5 @@ import java.lang.reflect.Parameter
 interface ParameterResolver : WithPriority {
 
 	fun supports(parameter: Parameter): Boolean
-	fun evaluate(methodTarget: MethodTarget, rawParameterInput: String): List<Any?>
+	fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?>
 }

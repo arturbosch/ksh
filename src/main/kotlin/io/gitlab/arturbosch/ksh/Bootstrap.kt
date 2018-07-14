@@ -1,5 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
+import io.gitlab.arturbosch.ksh.api.InputLine
+import io.gitlab.arturbosch.ksh.defaults.JLineInput
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 import java.lang.reflect.InvocationTargetException
@@ -12,10 +14,10 @@ class Bootstrap(private val kShell: KShell) {
 	fun start() {
 		while (true) {
 			try {
-				val line = kShell.readLine(kShell.message)
+				val line = kShell.readLine(kShell.message())
 				if (!line.isNullOrBlank()) {
 					try { // reflection protection
-						interpret(line)
+						JLineInput(kShell.parsedLine).interpret()
 					} catch (e: InvocationTargetException) {
 						throw e.targetException
 					}
@@ -31,8 +33,8 @@ class Bootstrap(private val kShell: KShell) {
 		}
 	}
 
-	private fun interpret(line: String) {
-		val methodTarget = kShell.evaluate(line)
+	private fun InputLine.interpret() {
+		val methodTarget = kShell.evaluate(this)
 		val result = methodTarget.invoke()
 		result?.let { println(result) }
 	}
