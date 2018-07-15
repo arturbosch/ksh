@@ -23,12 +23,13 @@ class Bootstrap(private val kShell: KShell) {
 					}
 				}
 			} catch (e: ShellException) {
-				e.message?.let { println(e.message) }
-				e.cause?.let { println(e.cause) }
+				kShell.writeln(e.message)
 			} catch (e: UserInterruptException) {
 				// Ignore
 			} catch (e: EndOfFileException) {
 				return
+			} catch (e: RuntimeException) {
+				kShell.writeln(e.toString())
 			}
 		}
 	}
@@ -36,6 +37,6 @@ class Bootstrap(private val kShell: KShell) {
 	private fun InputLine.interpret() {
 		val methodTarget = kShell.evaluate(this)
 		val result = methodTarget.invoke()
-		result?.let { println(result) }
+		result?.let { kShell.writeln(result.toString()) }
 	}
 }
