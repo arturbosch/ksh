@@ -2,3 +2,4 @@ io.gitlab.arturbosch.ksh.commands.System
 io.gitlab.arturbosch.ksh.commands.Exit
 io.gitlab.arturbosch.ksh.commands.Clear
 io.gitlab.arturbosch.ksh.commands.Help
+io.gitlab.arturbosch.ksh.commands.Stacktrace

@@ -18,6 +18,8 @@ class KShell(private val prompt: Prompt,
 		Prompt by prompt {
 
 	override val priority: Int = Int.MIN_VALUE
+
+	fun writeln(msg: String?) = terminal.writeln(msg)
 }
 
 class DefaultKShellContext(override val prompt: Prompt,

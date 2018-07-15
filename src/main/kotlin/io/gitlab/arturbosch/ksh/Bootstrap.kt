@@ -30,6 +30,7 @@ class Bootstrap(private val kShell: KShell) {
 				return
 			} catch (e: RuntimeException) {
 				kShell.writeln(e.toString())
+				LastExceptionState.error = e
 			}
 		}
 	}

@@ -12,13 +12,13 @@ object Debugging {
 
 	fun log(msg: () -> Any?) {
 		if (isDebug) {
-			terminal.writer().write(msg()?.toString() + "\n")
+			terminal.writeln(msg()?.toString())
 		}
 	}
 
 	fun log(msg: Any?) {
 		if (isDebug) {
-			terminal.writer().write(msg?.toString() + "\n")
+			terminal.writeln(msg?.toString())
 		}
 	}
 }

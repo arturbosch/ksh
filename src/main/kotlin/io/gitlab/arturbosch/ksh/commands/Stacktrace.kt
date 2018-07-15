@@ -1,18 +1,19 @@
 package io.gitlab.arturbosch.ksh.commands
 
+import io.gitlab.arturbosch.ksh.LastExceptionState
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.context.KShellContext
+import io.gitlab.arturbosch.ksh.writeln
 import org.jline.terminal.Terminal
-import org.jline.utils.InfoCmp
 import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
  */
 @BuiltinCommand
-class Clear : ShellClass {
+class Stacktrace : ShellClass {
 
 	private var terminal: Terminal by Delegates.notNull()
 
@@ -20,8 +21,8 @@ class Clear : ShellClass {
 		terminal = context.terminal
 	}
 
-	@ShellMethod(help = "Clears the terminal.")
+	@ShellMethod
 	fun main() {
-		terminal.puts(InfoCmp.Capability.clear_screen)
+		terminal.writeln(LastExceptionState.error)
 	}
 }

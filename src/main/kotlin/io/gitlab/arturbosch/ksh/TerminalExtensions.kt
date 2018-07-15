@@ -7,4 +7,4 @@ import org.jline.terminal.Terminal
  */
 fun Terminal.writeln(msg: String?) = writer().write(msg + "\n")
 
-fun KShell.writeln(msg: String?) = terminal.writeln(msg)
+fun Terminal.writeln(error: Throwable?) = error?.printStackTrace(writer())
