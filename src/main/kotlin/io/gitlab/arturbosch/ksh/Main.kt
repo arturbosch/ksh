@@ -9,10 +9,14 @@ fun main(args: Array<String>) {
 
 	context.apply {
 		val prompt = createPrompt()
+		Debugging.isDebug = prompt.debug
 		val terminal = createTerminal()
+		Debugging.terminal = terminal
 		val lineReader = createLineReader(prompt, terminal)
 
 		val commands = loadCommands()
+		Debugging.log { commands }
+
 		val kShellContext = DefaultKShellContext(prompt, lineReader, terminal)
 		commands.forEach { it.init(kShellContext) }
 

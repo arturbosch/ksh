@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
@@ -40,26 +41,25 @@ class DefaultParameterResolver : ParameterResolver {
 		val arguments = mutableListOf<Any?>()
 		for (parameter in methodTarget.parameters) {
 			val methodParameter = methodParameters[parameter]
-			if (methodParameter != null) {
+			val convertedArgument = if (methodParameter != null) {
 				val (_, values, _) = methodParameter
 				val argument: String = when (values.size) {
 					0 -> "true"
 					1 -> values[0]
 					else -> values.joinToString("; ")
 				}
-				val convertedArgument = convert(parameter, argument)
-				arguments.add(convertedArgument)
+				convert(parameter, argument)
 			} else {
-				val convertedArgument =
-						if (unusedWords.isNotEmpty() && parameter.isUnnamedOption()) {
-							val word = unusedWords.first()
-							unusedWords.remove(word)
-							convert(parameter, word)
-						} else {
-							convert(parameter, parameter.defaultValue())
-						}
-				arguments.add(convertedArgument)
+				if (unusedWords.isNotEmpty() && parameter.isUnnamedOption()) {
+					val word = unusedWords.first()
+					unusedWords.remove(word)
+					convert(parameter, word)
+				} else {
+					convert(parameter, parameter.defaultValue())
+				}
 			}
+			Debugging.log(convertedArgument)
+			arguments.add(convertedArgument)
 		}
 
 		return arguments

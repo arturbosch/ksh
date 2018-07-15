@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.CallTarget
 import io.gitlab.arturbosch.ksh.api.InputLine
@@ -44,7 +45,9 @@ open class DefaultResolver : Resolver {
 			parameterResolver.evaluate(methodTarget, input)
 		}
 
-		return CallTarget(provider, methodTarget, arguments)
+		return CallTarget(provider, methodTarget, arguments).apply {
+			Debugging.log { provider }
+		}
 	}
 
 	private fun findMatchingClass(name: String): ShellClass {
