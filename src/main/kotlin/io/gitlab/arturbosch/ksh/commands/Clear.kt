@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.commands
 
+import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.context.KShellContext
@@ -9,6 +10,7 @@ import org.jline.utils.InfoCmp
 /**
  * @author Artur Bosch
  */
+@BuiltinCommand
 class Clear : ShellClass {
 
 	private var terminal: Terminal? = null

@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.commands
 
+import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import java.time.LocalDate
@@ -8,6 +9,7 @@ import java.time.LocalDateTime
 /**
  * @author Artur Bosch
  */
+@BuiltinCommand
 class System : ShellClass {
 
 	override val help: String = "Provides different system utils."

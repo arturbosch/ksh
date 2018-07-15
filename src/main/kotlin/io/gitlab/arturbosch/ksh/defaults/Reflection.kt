@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
@@ -19,6 +20,8 @@ fun ShellClass.extractMethods() = javaClass
 		.declaredMethods
 		.filter { it.isAnnotationPresent(ShellMethod::class.java) }
 		.map { it.toShellMethod() }
+
+fun ShellClass.isBuiltin(): Boolean = javaClass.getAnnotation(BuiltinCommand::class.java) != null
 
 fun Method.parameterPrefix() = getAnnotation(ShellMethod::class.java)?.prefix
 		?: throw IllegalStateException("Method with ShellMethod annotation expected.")
