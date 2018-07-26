@@ -25,7 +25,11 @@ class DefaultParameterResolver : ParameterResolver {
 		val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
 		val words = input.words().subList(input.parameterStartIndex, input.size())
 		val unusedWords = mutableSetOf<String>()
+		var nextIndex = 0
 		for ((index, word) in words.withIndex()) {
+			if (index < nextIndex) {
+				continue
+			}
 			if (word in allKeys) {
 				val parameter = methodTarget.lookupParameter(word, prefix)
 				val arity = parameter.arity()
@@ -33,6 +37,7 @@ class DefaultParameterResolver : ParameterResolver {
 				val to = from + arity
 				val values = words.subList(from, to)
 				methodParameters[parameter] = MethodParameter(word, values, parameter)
+				nextIndex = to
 			} else {
 				unusedWords.add(word)
 			}

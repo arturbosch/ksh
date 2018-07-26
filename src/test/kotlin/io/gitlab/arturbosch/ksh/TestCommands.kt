@@ -42,3 +42,15 @@ class Conversions : ShellClass {
 		return "$aInt $aFloat $aBool $aDouble $aString $aFile"
 	}
 }
+
+class Gradle : ShellClass {
+
+	@ShellMethod
+	fun module(
+			@ShellOption(["", "--name"]) name: String,
+			@ShellOption(["-g", "--group"]) group: String,
+			@ShellOption(["-l", "--language"], defaultValue = "kotlin") language: String,
+			@ShellOption(["-kts", "--kotlin-dsl"], arity = 0, defaultValue = "false") kts: Boolean,
+			@ShellOption(["-wd", "--working-dir"], defaultValue = ".") workingDir: String
+	): String = ""
+}
