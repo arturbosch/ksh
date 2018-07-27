@@ -20,6 +20,7 @@ mainClassName = 'io.gitlab.arturbosch.ksh.MainKt'
 dependencies {
 	compile project(":ksh-api")
 	compile "org.jline:jline:$jlineVersion"
+	compile "io.gitlab.arturbosch:kutils:$kutilsVersion"
 }
 
 allprojects {

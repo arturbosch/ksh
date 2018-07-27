@@ -21,7 +21,7 @@ class Stacktrace : ShellClass {
 		terminal = context.terminal
 	}
 
-	@ShellMethod
+	@ShellMethod(help = "Prints the last error.")
 	fun main() {
 		terminal.writeln(LastExceptionState.error)
 	}
