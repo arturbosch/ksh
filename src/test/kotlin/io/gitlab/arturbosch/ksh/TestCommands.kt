@@ -45,6 +45,7 @@ class Conversions : ShellClass {
 
 class Gradle : ShellClass {
 
+	@Suppress("UNUSED_PARAMETER")
 	@ShellMethod
 	fun module(
 			@ShellOption(["", "--name"]) name: String,

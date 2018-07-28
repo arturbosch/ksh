@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.api.context.KShellContext
+import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.defaults.extractMethods
 import io.gitlab.arturbosch.ksh.defaults.isBuiltin
 import io.gitlab.arturbosch.ksh.defaults.shellMethod

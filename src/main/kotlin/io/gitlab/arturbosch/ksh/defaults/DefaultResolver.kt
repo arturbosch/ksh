@@ -19,9 +19,12 @@ open class DefaultResolver : Resolver {
 
 	private var commands: List<ShellClass> by Delegates.notNull()
 
-	private val none = LazyThreadSafetyMode.NONE
-	private val nameToProvider by lazy(none) { commands.map { it.commandId to it }.toMap() }
-	private val providerToMethods by lazy(none) { commands.map { it to it.extractMethods() }.toMap() }
+	private val nameToProvider by lazy(LazyThreadSafetyMode.NONE) {
+		commands.map { it.commandId to it }.toMap()
+	}
+	private val providerToMethods by lazy(LazyThreadSafetyMode.NONE) {
+		commands.map { it to it.extractMethods() }.toMap()
+	}
 
 	private val parameterResolver = loadParameterResolver().first() // TODO support more
 

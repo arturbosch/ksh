@@ -1,10 +1,11 @@
 package io.gitlab.arturbosch.ksh
 
+import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.api.Prompt
 import io.gitlab.arturbosch.ksh.api.Resolver
+import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellClass
-import io.gitlab.arturbosch.ksh.api.ShellContext
 import io.gitlab.arturbosch.ksh.api.WithPriority
 import java.util.ServiceLoader
 
@@ -14,7 +15,11 @@ import java.util.ServiceLoader
 
 val kshLoader: ClassLoader = KShell::class.java.classLoader
 
-fun loadShellContext() = ServiceLoader.load(ShellContext::class.java, kshLoader).firstPrioritized()
+fun loadShellContext() = ServiceLoader.load(KShellContext::class.java, kshLoader)
+		.firstPrioritized()
+		?: throw IllegalStateException("No KShellContext class provided.")
+
+fun loadShellBuilder() = ServiceLoader.load(ShellBuilder::class.java, kshLoader).firstPrioritized()
 fun loadPrompt() = ServiceLoader.load(Prompt::class.java, kshLoader).firstPrioritized()
 fun loadCommands() = ServiceLoader.load(ShellClass::class.java, kshLoader).toList()
 fun loadResolver() = ServiceLoader.load(Resolver::class.java, kshLoader).firstPrioritized()

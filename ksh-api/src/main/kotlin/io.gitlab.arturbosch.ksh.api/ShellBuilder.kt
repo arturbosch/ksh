@@ -6,7 +6,7 @@ import org.jline.terminal.Terminal
 /**
  * @author Artur Bosch
  */
-interface ShellContext : WithPriority {
+interface ShellBuilder : WithPriority {
 
 	fun createPrompt(): Prompt
 	fun createResolver(): Resolver

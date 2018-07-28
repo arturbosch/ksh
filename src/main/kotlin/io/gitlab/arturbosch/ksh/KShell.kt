@@ -1,11 +1,12 @@
 package io.gitlab.arturbosch.ksh
 
+import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.api.Prompt
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
-import io.gitlab.arturbosch.ksh.api.context.KShellContext
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
+import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
@@ -22,9 +23,9 @@ class KShell(private val prompt: Prompt,
 	fun writeln(msg: String?) = terminal.writeln(msg)
 }
 
-class DefaultKShellContext(override val prompt: Prompt,
-						   override val reader: LineReader,
-						   override val terminal: Terminal) : KShellContext {
+class DefaultKShellContext : KShellContext() {
+
+	override val priority: Int = Int.MIN_VALUE
 
 	override fun commands(): List<ShellClass> = loadCommands()
 }

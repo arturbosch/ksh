@@ -2,7 +2,7 @@ package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.Prompt
 import io.gitlab.arturbosch.ksh.api.Resolver
-import io.gitlab.arturbosch.ksh.api.ShellContext
+import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.loadPrompt
 import io.gitlab.arturbosch.ksh.loadResolver
 import org.jline.reader.LineReader
@@ -15,7 +15,7 @@ import org.jline.terminal.TerminalBuilder
 /**
  * @author Artur Bosch
  */
-class DefaultShellContext : ShellContext {
+class DefaultShellBuilder : ShellBuilder {
 
 	override val priority: Int = -1
 
