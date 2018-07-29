@@ -7,6 +7,7 @@ import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.kutils.consume
 import io.gitlab.arturbosch.kutils.process
 import java.io.File
+import java.io.IOException
 
 /**
  * @author Artur Bosch
@@ -22,11 +23,12 @@ class Script : ShellClass {
 	fun main(
 			@ShellOption(["", "--command"]) command: String,
 			@ShellOption(["-wd", "--working-dir"]) workDir: File?
-	): String {
-		process(command.split(" "), workDir ?: File("."))
+	): String = try {
+		val (out, err, status) = process(
+				command.split(" "), workDir ?: File("."))
 				.consume()
-				.onSuccess { return it.joinToString(sep) }
-				.onError { return it.joinToString(sep) }
-		return "Command exited unexpected."
+		(if (status == 0) out else err).joinToString(sep)
+	} catch (ioe: IOException) {
+		throw IllegalArgumentException("Error executing script 'command'.", ioe)
 	}
 }
