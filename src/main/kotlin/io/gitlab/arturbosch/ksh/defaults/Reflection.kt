@@ -6,7 +6,6 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.api.ShellOptions
-import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 
 
@@ -23,8 +22,11 @@ fun ShellClass.extractMethods() = javaClass
 
 fun ShellClass.isBuiltin(): Boolean = javaClass.getAnnotation(BuiltinCommand::class.java) != null
 
-fun Method.parameterPrefix() = getAnnotation(ShellMethod::class.java)?.prefix
-		?: throw IllegalStateException("Method with ShellMethod annotation expected.")
+fun MethodTarget.shellMethod(): ShellMethod? = method.getAnnotation(ShellMethod::class.java)
+	?: throw IllegalStateException("Method with ShellMethod annotation expected.")
+
+fun MethodTarget.parameterPrefix() = shellMethod()?.prefix
+	?: throw IllegalStateException("Method with ShellMethod annotation expected.")
 
 fun MethodTarget.lookupParameter(word: String, prefix: String): Parameter {
 	for (parameter in method.parameters) {

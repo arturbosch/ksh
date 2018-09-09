@@ -19,7 +19,7 @@ class DefaultParameterResolver : ParameterResolver {
 	override fun supports(parameter: Parameter): Boolean = true
 
 	override fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?> {
-		val prefix = methodTarget.method.parameterPrefix()
+		val prefix = methodTarget.parameterPrefix()
 		val allKeys = methodTarget.parameters.flatMap { it.prefixedValues(prefix) }
 
 		val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
