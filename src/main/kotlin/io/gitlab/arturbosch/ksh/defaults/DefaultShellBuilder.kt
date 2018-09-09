@@ -15,7 +15,7 @@ import org.jline.terminal.TerminalBuilder
 /**
  * @author Artur Bosch
  */
-class DefaultShellBuilder : ShellBuilder {
+open class DefaultShellBuilder : ShellBuilder {
 
 	override val priority: Int = -1
 

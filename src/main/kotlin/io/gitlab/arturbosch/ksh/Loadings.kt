@@ -13,13 +13,15 @@ import java.util.ServiceLoader
  * @author Artur Bosch
  */
 
-val kshLoader: ClassLoader = KShell::class.java.classLoader
+val kshLoader: ClassLoader = Bootstrap::class.java.classLoader
 
 fun loadShellContext() = ServiceLoader.load(KShellContext::class.java, kshLoader)
 		.firstPrioritized()
-		?: throw IllegalStateException("No KShellContext class provided.")
+	?: throw IllegalStateException("No KShellContext class provided.")
 
 fun loadShellBuilder() = ServiceLoader.load(ShellBuilder::class.java, kshLoader).firstPrioritized()
+	?: throw IllegalStateException("No shell builder provided.")
+
 fun loadPrompt() = ServiceLoader.load(Prompt::class.java, kshLoader).firstPrioritized()
 fun loadCommands() = ServiceLoader.load(ShellClass::class.java, kshLoader).toList()
 fun loadResolver() = ServiceLoader.load(Resolver::class.java, kshLoader).firstPrioritized()
