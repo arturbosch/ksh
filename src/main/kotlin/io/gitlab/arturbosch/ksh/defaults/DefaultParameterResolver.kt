@@ -43,7 +43,19 @@ class DefaultParameterResolver : ParameterResolver {
 			}
 		}
 
+		// special case: method with one parameter which may be unnamed
+		// concatenate all unused word so basically e.g. test one two.. becomes test "one two..".
+		if (methodTarget.parameters.size == 1 && unusedWords.isNotEmpty()) {
+			val firstParam = methodTarget.parameters[0]
+			if (firstParam.isUnnamedOption()) {
+				val fullArgument = unusedWords.joinToString(" ")
+				val converted = convert(firstParam, fullArgument)
+				return listOf(converted)
+			}
+		}
+
 		val arguments = mutableListOf<Any?>()
+
 		for (parameter in methodTarget.parameters) {
 			val methodParameter = methodParameters[parameter]
 			val convertedArgument = if (methodParameter != null) {
