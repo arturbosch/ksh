@@ -24,7 +24,7 @@ dependencies {
 }
 
 allprojects {
-	group 'io.gitlab.arturbosch.ksh'
+	group 'io.gitlab.arturbosch'
 	version "$kshVersion"
 
 	apply plugin: 'kotlin'
@@ -72,9 +72,15 @@ allprojects {
 		}
 	}
 
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
 	publishing {
 		publications {
 			ksh(MavenPublication) {
+				artifact sourcesJar
 				from components.java
 				groupId project.group
 				artifactId project.name
