@@ -3,6 +3,7 @@ package io.gitlab.arturbosch.ksh
 import io.gitlab.arturbosch.ksh.api.KShellContext
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
+import kotlin.system.exitProcess
 
 /**
  * @author Artur Bosch
@@ -17,6 +18,8 @@ class Bootstrap(private val context: KShellContext) {
 				// Ignore
 			} catch (e: EndOfFileException) {
 				return // Exit repl
+			} catch (e: ExitShell) {
+				exitProcess(e.exitCode)
 			} catch (e: RuntimeException) {
 				context.writeln(e.toString())
 				LastExceptionState.error = e
