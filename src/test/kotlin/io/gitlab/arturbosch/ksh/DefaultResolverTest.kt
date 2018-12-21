@@ -1,7 +1,9 @@
 package io.gitlab.arturbosch.ksh
 
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import org.junit.Test
+import java.nio.file.Path
 
 /**
  * @author Artur Bosch
@@ -70,5 +72,11 @@ class DefaultResolverTest {
 	fun resolveTwoUnnamedParameters() {
 		val target = resolver.evaluate("hello invalid Artur 25")
 		assertk.assert(target.invoke()).isEqualTo("Hello Artur - 25")
+	}
+
+	@Test
+	fun resolvesPathParameters() {
+		val target = resolver.evaluate("conversions path this/is/a/path")
+		assertk.assert(target.invoke()!!).isInstanceOf(Path::class)
 	}
 }

@@ -4,6 +4,7 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import java.io.File
+import java.nio.file.Path
 
 class Hello : ShellClass {
 
@@ -41,6 +42,9 @@ class Conversions : ShellClass {
 			 @ShellOption(["-file"]) aFile: File): String {
 		return "$aInt $aFloat $aBool $aDouble $aString $aFile"
 	}
+
+	@ShellMethod
+	fun path(@ShellOption(["", "-p"]) path: Path) = path
 }
 
 class Gradle : ShellClass {

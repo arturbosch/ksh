@@ -1,9 +1,12 @@
 package io.gitlab.arturbosch.ksh.api
 
+import kotlin.reflect.KClass
+
 /**
  * @author Artur Bosch
  */
-@FunctionalInterface
-interface Converter<T> {
-	fun convert(input: String): T
+interface Converter<T : Any> : WithPriority {
+
+	val id: KClass<T>
+	fun parse(input: String): T
 }

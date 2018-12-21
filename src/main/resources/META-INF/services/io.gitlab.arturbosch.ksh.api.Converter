@@ -1,0 +1,7 @@
+io.gitlab.arturbosch.ksh.converters.BoolConverter
+io.gitlab.arturbosch.ksh.converters.DoubleConverter
+io.gitlab.arturbosch.ksh.converters.FileConverter
+io.gitlab.arturbosch.ksh.converters.FloatConverter
+io.gitlab.arturbosch.ksh.converters.IntConverter
+io.gitlab.arturbosch.ksh.converters.PathConverter
+io.gitlab.arturbosch.ksh.converters.StringConverter

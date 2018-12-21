@@ -1,28 +1,34 @@
 package io.gitlab.arturbosch.ksh.converters
 
+import io.gitlab.arturbosch.ksh.api.Converter
 import io.gitlab.arturbosch.ksh.api.ShellOptions
-import java.io.File
+import io.gitlab.arturbosch.ksh.kshLoader
 import java.lang.reflect.Parameter
-
-private val booleans = setOf(Boolean::class.javaPrimitiveType, Boolean::class.java)
-private val ints = setOf(Int::class.javaPrimitiveType, Int::class.java)
-private val floats = setOf(Float::class.javaPrimitiveType, Float::class.java)
-private val doubles = setOf(Double::class.javaPrimitiveType, Double::class.java)
+import java.util.ServiceLoader
+import kotlin.reflect.KClass
 
 /**
  * @author Artur Bosch
  */
-fun convert(parameter: Parameter, argument: String): Any? {
-	if (argument == ShellOptions.NULL_DEFAULT) {
-		return null
-	}
-	return when (parameter.type) {
-		String::class.java -> StringConverter(argument)
-		File::class.java -> FileConverter(argument)
-		in booleans -> BoolConverter(argument)
-		in ints -> IntConverter(argument)
-		in floats -> FloatConverter(argument)
-		in doubles -> DoubleConverter(argument)
-		else -> throw IllegalArgumentException("Could not convert '$argument' to '${parameter.type}'.")
+class Conversions {
+
+	private val converters: Map<KClass<*>, Converter<*>> =
+			ServiceLoader.load(Converter::class.java, kshLoader).toList()
+					.asSequence()
+					.sortedBy { it.priority }
+					.map { it.id to it }
+					.toMap()
+
+	fun supports(parameter: Parameter) = converters.containsKey(parameter.type.kotlin)
+
+	fun convert(parameter: Parameter, argument: String): Any? {
+		if (argument == ShellOptions.NULL_DEFAULT) {
+			return null
+		}
+		val converter = converters[parameter.type.kotlin]
+		if (converter != null) {
+			return converter.parse(argument)
+		}
+		throw IllegalArgumentException("Could not convert '$argument' to '${parameter.type}'.")
 	}
 }

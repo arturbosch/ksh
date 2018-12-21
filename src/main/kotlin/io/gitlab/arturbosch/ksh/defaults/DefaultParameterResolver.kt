@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
-import io.gitlab.arturbosch.ksh.converters.convert
+import io.gitlab.arturbosch.ksh.converters.Conversions
 import java.lang.reflect.Parameter
 
 /**
@@ -12,11 +12,13 @@ import java.lang.reflect.Parameter
  */
 class DefaultParameterResolver : ParameterResolver {
 
+	private val converter = Conversions()
+
 	data class MethodParameter(val option: String,
 							   val values: List<String>,
 							   val parameter: Parameter)
 
-	override fun supports(parameter: Parameter): Boolean = true
+	override fun supports(parameter: Parameter): Boolean = converter.supports(parameter)
 
 	override fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?> {
 		val prefix = methodTarget.parameterPrefix()
@@ -49,7 +51,7 @@ class DefaultParameterResolver : ParameterResolver {
 			val firstParam = methodTarget.parameters[0]
 			if (firstParam.isUnnamedOption()) {
 				val fullArgument = unusedWords.joinToString(" ")
-				val converted = convert(firstParam, fullArgument)
+				val converted = converter.convert(firstParam, fullArgument)
 				return listOf(converted)
 			}
 		}
@@ -65,14 +67,14 @@ class DefaultParameterResolver : ParameterResolver {
 					1 -> values[0]
 					else -> values.joinToString("; ")
 				}
-				convert(parameter, argument)
+				converter.convert(parameter, argument)
 			} else {
 				if (unusedWords.isNotEmpty() && parameter.isUnnamedOption()) {
 					val word = unusedWords.first()
 					unusedWords.remove(word)
-					convert(parameter, word)
+					converter.convert(parameter, word)
 				} else {
-					convert(parameter, parameter.defaultValue())
+					converter.convert(parameter, parameter.defaultValue())
 				}
 			}
 			Debugging.log(convertedArgument)
