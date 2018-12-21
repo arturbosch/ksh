@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh.converters
 
 import io.gitlab.arturbosch.ksh.api.Converter
-import io.gitlab.arturbosch.ksh.api.ShellOptions
+import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.kshLoader
 import java.lang.reflect.Parameter
 import java.util.ServiceLoader
@@ -22,7 +22,7 @@ class Conversions {
 	fun supports(parameter: Parameter) = converters.containsKey(parameter.type.kotlin)
 
 	fun convert(parameter: Parameter, argument: String): Any? {
-		if (argument == ShellOptions.NULL_DEFAULT) {
+		if (argument == ShellOption.NULL_DEFAULT) {
 			return null
 		}
 		val converter = converters[parameter.type.kotlin]

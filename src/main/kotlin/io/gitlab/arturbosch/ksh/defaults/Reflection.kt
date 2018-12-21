@@ -5,13 +5,12 @@ import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
-import io.gitlab.arturbosch.ksh.api.ShellOptions
 import java.lang.reflect.Parameter
 
 
 val Parameter.shellOption: ShellOption? get() = getAnnotation(ShellOption::class.java)
 
-fun Parameter.defaultValue(): String = shellOption?.defaultValue ?: ShellOptions.NULL_DEFAULT
+fun Parameter.defaultValue(): String = shellOption?.defaultValue ?: ShellOption.NULL_DEFAULT
 
 fun Parameter.isUnnamedOption(): Boolean = shellOption?.value?.let { "" in it } ?: false
 
@@ -40,7 +39,7 @@ fun MethodTarget.lookupParameter(word: String, prefix: String): Parameter {
 fun Parameter.arity(): Int {
 	val option = getAnnotation(ShellOption::class.java)
 	val inferred = if (hasBoolType()) 0 else 1
-	return if (option != null && option.arity != ShellOptions.EXTRACT_ARITY) option.arity else inferred
+	return if (option != null && option.arity != ShellOption.EXTRACT_ARITY) option.arity else inferred
 }
 
 fun Parameter.hasBoolType() =
