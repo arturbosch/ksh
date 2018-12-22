@@ -7,6 +7,6 @@ import kotlin.reflect.KClass
  */
 interface Converter<T : Any> : WithPriority {
 
-	val id: KClass<T>
-	fun parse(input: String): T
+    val id: KClass<T>
+    fun parse(input: String): T
 }

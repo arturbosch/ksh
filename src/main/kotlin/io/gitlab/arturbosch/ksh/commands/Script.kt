@@ -20,35 +20,35 @@ import java.io.IOException
 @BuiltinCommand
 class Script : ShellClass {
 
-	override val commandId: String = "!"
+    override val commandId: String = "!"
 
-	private val sep = java.lang.System.lineSeparator()
-	private var context: KShellContext by single()
+    private val sep = java.lang.System.lineSeparator()
+    private var context: KShellContext by single()
 
-	override fun init(context: KShellContext) {
-		this.context = context
-	}
+    override fun init(context: KShellContext) {
+        this.context = context
+    }
 
-	@ShellMethod(help = "Allows to executes arbitrary shell commands.")
-	fun main(
-			@ShellOption(["", "--command"]) command: String,
-			@ShellOption(["-wd", "--working-dir"]) workDir: File?
-	): String = try {
-		val (out, err, status) = process(
-				command.split(" "), workDir ?: File("."))
-				.consume()
-		(if (status == 0) out else err).joinToString(sep)
-	} catch (ioe: IOException) {
-		throw IllegalArgumentException("Error executing script 'command'.", ioe)
-	}
+    @ShellMethod(help = "Allows to executes arbitrary shell commands.")
+    fun main(
+        @ShellOption(["", "--command"]) command: String,
+        @ShellOption(["-wd", "--working-dir"]) workDir: File?
+    ): String = try {
+        val (out, err, status) = process(
+                command.split(" "), workDir ?: File("."))
+                .consume()
+        (if (status == 0) out else err).joinToString(sep)
+    } catch (ioe: IOException) {
+        throw IllegalArgumentException("Error executing script 'command'.", ioe)
+    }
 
-	@ShellMethod(help = "Allows to execute ksh commands provided by a file.")
-	fun file(
-			@ShellOption([""], help = "Path to a ksh script") scriptName: String
-	) = try {
-		context.interpret(scriptName.asPath().readLines())
-		context.terminal.flush()
-	} catch (ioe: IOException) {
-		throw IllegalArgumentException("Error executing script 'command'.", ioe)
-	}
+    @ShellMethod(help = "Allows to execute ksh commands provided by a file.")
+    fun file(
+        @ShellOption([""], help = "Path to a ksh script") scriptName: String
+    ) = try {
+        context.interpret(scriptName.asPath().readLines())
+        context.terminal.flush()
+    } catch (ioe: IOException) {
+        throw IllegalArgumentException("Error executing script 'command'.", ioe)
+    }
 }

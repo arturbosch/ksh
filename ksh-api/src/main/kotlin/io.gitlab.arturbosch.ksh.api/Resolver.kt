@@ -5,6 +5,6 @@ package io.gitlab.arturbosch.ksh.api
  */
 interface Resolver : WithPriority {
 
-	fun init(commands: List<ShellClass>): Resolver
-	fun evaluate(input: InputLine): CallTarget
+    fun init(commands: List<ShellClass>): Resolver
+    fun evaluate(input: InputLine): CallTarget
 }

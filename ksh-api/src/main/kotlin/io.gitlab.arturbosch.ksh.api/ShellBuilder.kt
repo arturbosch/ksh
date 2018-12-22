@@ -8,8 +8,8 @@ import org.jline.terminal.Terminal
  */
 interface ShellBuilder : WithPriority {
 
-	fun createPrompt(): Prompt
-	fun createResolver(): Resolver
-	fun createTerminal(): Terminal
-	fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader
+    fun createPrompt(): Prompt
+    fun createResolver(): Resolver
+    fun createTerminal(): Terminal
+    fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader
 }

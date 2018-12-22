@@ -9,7 +9,7 @@ import org.jline.reader.impl.DefaultParser
  */
 class TestResolver : DefaultResolver() {
 
-	private val parser = DefaultParser()
+    private val parser = DefaultParser()
 
-	fun evaluate(input: String) = evaluate(JLineInput(parser.parse(input, 0)))
+    fun evaluate(input: String) = evaluate(JLineInput(parser.parse(input, 0)))
 }

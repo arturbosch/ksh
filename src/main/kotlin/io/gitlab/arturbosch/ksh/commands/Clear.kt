@@ -14,14 +14,14 @@ import kotlin.properties.Delegates
 @BuiltinCommand
 class Clear : ShellClass {
 
-	private var terminal: Terminal by Delegates.notNull()
+    private var terminal: Terminal by Delegates.notNull()
 
-	override fun init(context: KShellContext) {
-		terminal = context.terminal
-	}
+    override fun init(context: KShellContext) {
+        terminal = context.terminal
+    }
 
-	@ShellMethod(help = "Clears the terminal.")
-	fun main() {
-		terminal.puts(InfoCmp.Capability.clear_screen)
-	}
+    @ShellMethod(help = "Clears the terminal.")
+    fun main() {
+        terminal.puts(InfoCmp.Capability.clear_screen)
+    }
 }

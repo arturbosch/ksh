@@ -8,12 +8,12 @@ import org.junit.Test
  */
 class FixedResolverBugsTest {
 
-	private val resolver = TestResolver()
-			.init(listOf(Gradle())) as TestResolver
+    private val resolver = TestResolver()
+            .init(listOf(Gradle())) as TestResolver
 
-	@Test
-	fun `should skip non flag words after arity is resolved`() {
-		val target = resolver.evaluate("gradle module testy -wd /bla/bla -g a.b.c")
-		assertk.assert(target.invoke()).isEqualTo("")
-	}
+    @Test
+    fun `should skip non flag words after arity is resolved`() {
+        val target = resolver.evaluate("gradle module testy -wd /bla/bla -g a.b.c")
+        assertk.assert(target.invoke()).isEqualTo("")
+    }
 }

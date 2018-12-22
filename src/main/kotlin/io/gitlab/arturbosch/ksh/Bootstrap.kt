@@ -10,20 +10,20 @@ import kotlin.system.exitProcess
  */
 class Bootstrap(private val context: KShellContext) {
 
-	fun start() {
-		while (true) {
-			try {
-				context.readEvaluatePrint()
-			} catch (e: UserInterruptException) {
-				// Ignore
-			} catch (e: EndOfFileException) {
-				return // Exit repl
-			} catch (e: ExitShell) {
-				exitProcess(e.exitCode)
-			} catch (e: RuntimeException) {
-				context.writeln(e.toString())
-				LastExceptionState.error = e
-			}
-		}
-	}
+    fun start() {
+        while (true) {
+            try {
+                context.readEvaluatePrint()
+            } catch (e: UserInterruptException) {
+                // Ignore
+            } catch (e: EndOfFileException) {
+                return // Exit repl
+            } catch (e: ExitShell) {
+                exitProcess(e.exitCode)
+            } catch (e: RuntimeException) {
+                context.writeln(e.toString())
+                LastExceptionState.error = e
+            }
+        }
+    }
 }

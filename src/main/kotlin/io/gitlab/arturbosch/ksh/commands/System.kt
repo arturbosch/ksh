@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 @BuiltinCommand
 class System : ShellClass {
 
-	override val help: String = "Provides different system utils."
+    override val help: String = "Provides different system utils."
 
-	@ShellMethod(help = "Prints the current date.")
-	fun date(): String = LocalDate.now().toString()
+    @ShellMethod(help = "Prints the current date.")
+    fun date(): String = LocalDate.now().toString()
 
-	@ShellMethod(help = "Prints the current time.")
-	fun time(): String = LocalDateTime.now().toString()
+    @ShellMethod(help = "Prints the current time.")
+    fun time(): String = LocalDateTime.now().toString()
 }

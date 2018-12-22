@@ -10,23 +10,23 @@ import org.junit.Test
  */
 internal class ScriptTest {
 
-	@Test
-	fun `allows to execute arbitrary scripts with ksh commands in it`() {
-		val stream = ByteOutputStream()
-		val context = testContext(TestShellBuilder(out = stream))
-		val script = context.get<Script>()
-		val tmpFile = resourceAsTmpFile("hello_script")
+    @Test
+    fun `allows to execute arbitrary scripts with ksh commands in it`() {
+        val stream = ByteOutputStream()
+        val context = testContext(TestShellBuilder(out = stream))
+        val script = context.get<Script>()
+        val tmpFile = resourceAsTmpFile("hello_script")
 
-		script.file(tmpFile.toString())
+        script.file(tmpFile.toString())
 
-		val actual = stream.toString()
-		val expected = """
+        val actual = stream.toString()
+        val expected = """
 			Hello World!
 			Hello Artur!
 			Hello World!
 
 		""".trimIndent()
 
-		assertk.assert(actual).isEqualTo(expected)
-	}
+        assertk.assert(actual).isEqualTo(expected)
+    }
 }

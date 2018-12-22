@@ -13,22 +13,22 @@ import java.io.OutputStream
  * @author Artur Bosch
  */
 class TestShellBuilder(
-		private val `in`: InputStream = System.`in`,
-		private val out: OutputStream = System.out
+    private val `in`: InputStream = System.`in`,
+    private val out: OutputStream = System.out
 ) : DefaultShellBuilder() {
 
-	override fun createTerminal(): Terminal = DumbTerminal(`in`, out)
+    override fun createTerminal(): Terminal = DumbTerminal(`in`, out)
 }
 
 fun testContext(builder: DefaultShellBuilder = TestShellBuilder()) =
-		builder.initializeShellContext()
+        builder.initializeShellContext()
 
 inline fun <reified T> KShellContext.get() = commands().find { it is T } as? T
-	?: throw IllegalStateException("No such command '${T::class.java}'.")
+    ?: throw IllegalStateException("No such command '${T::class.java}'.")
 
 fun resourceAsTmpFile(resourceName: String): File {
-	val tempFile = File.createTempFile("ksh", System.currentTimeMillis().toString())
-	resourceAsStream(resourceName)
-			.copyTo(tempFile.outputStream())
-	return tempFile
+    val tempFile = File.createTempFile("ksh", System.currentTimeMillis().toString())
+    resourceAsStream(resourceName)
+            .copyTo(tempFile.outputStream())
+    return tempFile
 }

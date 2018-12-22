@@ -9,10 +9,10 @@ import kotlin.properties.Delegates
  */
 abstract class KShellContext : WithPriority {
 
-	var prompt: Prompt by Delegates.notNull()
-	var reader: LineReader by Delegates.notNull()
-	var terminal: Terminal by Delegates.notNull()
-	var resolver: Resolver by Delegates.notNull()
+    var prompt: Prompt by Delegates.notNull()
+    var reader: LineReader by Delegates.notNull()
+    var terminal: Terminal by Delegates.notNull()
+    var resolver: Resolver by Delegates.notNull()
 
-	abstract fun commands(): List<ShellClass>
+    abstract fun commands(): List<ShellClass>
 }

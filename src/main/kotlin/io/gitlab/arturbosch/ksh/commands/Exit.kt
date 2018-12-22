@@ -11,8 +11,8 @@ import org.jline.reader.EndOfFileException
 @BuiltinCommand
 class Exit : ShellClass {
 
-	@ShellMethod(help = "Exits the shell.")
-	fun main() {
-		throw EndOfFileException("")
-	}
+    @ShellMethod(help = "Exits the shell.")
+    fun main() {
+        throw EndOfFileException("")
+    }
 }

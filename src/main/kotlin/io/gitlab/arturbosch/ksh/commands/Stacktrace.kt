@@ -15,14 +15,14 @@ import kotlin.properties.Delegates
 @BuiltinCommand
 class Stacktrace : ShellClass {
 
-	private var terminal: Terminal by Delegates.notNull()
+    private var terminal: Terminal by Delegates.notNull()
 
-	override fun init(context: KShellContext) {
-		terminal = context.terminal
-	}
+    override fun init(context: KShellContext) {
+        terminal = context.terminal
+    }
 
-	@ShellMethod(help = "Prints the last error.")
-	fun main() {
-		terminal.writeln(LastExceptionState.error)
-	}
+    @ShellMethod(help = "Prints the last error.")
+    fun main() {
+        terminal.writeln(LastExceptionState.error)
+    }
 }

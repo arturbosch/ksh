@@ -17,27 +17,27 @@ import org.jline.terminal.TerminalBuilder
  */
 open class DefaultShellBuilder : ShellBuilder {
 
-	override val priority: Int = -1
+    override val priority: Int = -1
 
-	override fun createPrompt(): Prompt =
-			loadPrompt() ?: throw IllegalStateException("No prompt provider found!")
+    override fun createPrompt(): Prompt =
+            loadPrompt() ?: throw IllegalStateException("No prompt provider found!")
 
-	override fun createResolver(): Resolver =
-			loadResolver() ?: throw IllegalStateException("No resolver found!")
+    override fun createResolver(): Resolver =
+            loadResolver() ?: throw IllegalStateException("No resolver found!")
 
-	override fun createTerminal(): Terminal = TerminalBuilder.terminal()
+    override fun createTerminal(): Terminal = TerminalBuilder.terminal()
 
-	override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader {
-		val history = DefaultHistory()
-		val reader = LineReaderBuilder.builder()
-				.appName(prompt.applicationName)
-				.terminal(terminal)
-				.history(history)
-				.variable(LineReader.HISTORY_FILE, prompt.historyFile)
-				.parser(DefaultParser())
-				.build()
+    override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader {
+        val history = DefaultHistory()
+        val reader = LineReaderBuilder.builder()
+                .appName(prompt.applicationName)
+                .terminal(terminal)
+                .history(history)
+                .variable(LineReader.HISTORY_FILE, prompt.historyFile)
+                .parser(DefaultParser())
+                .build()
 
-		history.attach(reader)
-		return reader
-	}
+        history.attach(reader)
+        return reader
+    }
 }

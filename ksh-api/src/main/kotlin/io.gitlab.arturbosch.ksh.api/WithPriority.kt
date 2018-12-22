@@ -5,5 +5,5 @@ package io.gitlab.arturbosch.ksh.api
  */
 interface WithPriority {
 
-	val priority: Int get() = 0
+    val priority: Int get() = 0
 }

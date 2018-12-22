@@ -20,114 +20,114 @@ import kotlin.properties.Delegates
 @BuiltinCommand
 class Help : ShellClass {
 
-	private var context: KShellContext by Delegates.notNull()
+    private var context: KShellContext by Delegates.notNull()
 
-	override fun init(context: KShellContext) {
-		this.context = context
-	}
+    override fun init(context: KShellContext) {
+        this.context = context
+    }
 
-	@ShellMethod(help = "Prints this help message.")
-	fun main(
-			@ShellOption(["", "--command"], defaultValue = "") command: String
-	): String = if (command.isNotBlank()) {
-		val parts = command.trim()
-				.split(" ")
-				.filter { it.isNotEmpty() }
-		val shellClass = commandByName(parts[0])
-		val methods = shellClass.extractMethods()
+    @ShellMethod(help = "Prints this help message.")
+    fun main(
+        @ShellOption(["", "--command"], defaultValue = "") command: String
+    ): String = if (command.isNotBlank()) {
+        val parts = command.trim()
+                .split(" ")
+                .filter { it.isNotEmpty() }
+        val shellClass = commandByName(parts[0])
+        val methods = shellClass.extractMethods()
 
-		fun forSubCommand(mainOnly: Boolean = false): String {
-			val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == parts[1] }
-				?: throw IllegalArgumentException("No sub command with name '${parts[1]}' found.")
-			return forSpecificCommand(shellClass, shellMethod)
-		}
+        fun forSubCommand(mainOnly: Boolean = false): String {
+            val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == parts[1] }
+                ?: throw IllegalArgumentException("No sub command with name '${parts[1]}' found.")
+            return forSpecificCommand(shellClass, shellMethod)
+        }
 
-		if (parts.size == 1) {
-			if (methods.size == 1 && methods[0].isMain) {
-				forSubCommand(mainOnly = true)
-			} else {
-				shellClass.toHelp() + NL
-			}
-		} else {
-			forSubCommand()
-		}
-	} else {
-		forAllCommands()
-	}
+        if (parts.size == 1) {
+            if (methods.size == 1 && methods[0].isMain) {
+                forSubCommand(mainOnly = true)
+            } else {
+                shellClass.toHelp() + NL
+            }
+        } else {
+            forSubCommand()
+        }
+    } else {
+        forAllCommands()
+    }
 
-	private fun commandByName(command: String) = context.commands()
-			.find { it.commandId == command }
-		?: throw IllegalArgumentException("No command with name '$command' found.")
+    private fun commandByName(command: String) = context.commands()
+            .find { it.commandId == command }
+        ?: throw IllegalArgumentException("No command with name '$command' found.")
 
-	private fun forSpecificCommand(command: ShellClass, methodTarget: MethodTarget): String {
-		val subCommand = methodTarget.shellMethod()
-		val commandHelp = if (command.help.isNotEmpty()) " - ${command.help}" else ""
-		val subCommandHelp = if (subCommand?.help?.isNotEmpty().isTrue()) " - ${subCommand?.help}" else ""
-		val namePart = "NAME\n" +
-				"$EIGHT_SPACES${command.commandId}$commandHelp" +
-				"\n$EIGHT_SPACES$FOUR_SPACES${methodTarget.name}$subCommandHelp\n\n"
-		val synopsisPart = "SYNOPSIS\n" + EIGHT_SPACES + methodTarget.name +
-				methodTarget.parameters.joinToString(" ", prefix = " ") {
-					val isBool = it.hasBoolType()
-					val open = if (!isBool) "[" else ""
-					val closed = if (!isBool) "]" else ""
-					val value = if (!isBool) " [" + it.type.simpleName.toLowerCase() + "]" else ""
-					val name = it.shellOption?.value?.sorted()?.last()
-					"$open[$name]$value$closed"
-				} + NL
+    private fun forSpecificCommand(command: ShellClass, methodTarget: MethodTarget): String {
+        val subCommand = methodTarget.shellMethod()
+        val commandHelp = if (command.help.isNotEmpty()) " - ${command.help}" else ""
+        val subCommandHelp = if (subCommand?.help?.isNotEmpty().isTrue()) " - ${subCommand?.help}" else ""
+        val namePart = "NAME\n" +
+                "$EIGHT_SPACES${command.commandId}$commandHelp" +
+                "\n$EIGHT_SPACES$FOUR_SPACES${methodTarget.name}$subCommandHelp\n\n"
+        val synopsisPart = "SYNOPSIS\n" + EIGHT_SPACES + methodTarget.name +
+                methodTarget.parameters.joinToString(" ", prefix = " ") {
+                    val isBool = it.hasBoolType()
+                    val open = if (!isBool) "[" else ""
+                    val closed = if (!isBool) "]" else ""
+                    val value = if (!isBool) " [" + it.type.simpleName.toLowerCase() + "]" else ""
+                    val name = it.shellOption?.value?.sorted()?.last()
+                    "$open[$name]$value$closed"
+                } + NL
 
-		val optionsPart = if (methodTarget.parameters.isEmpty()) {
-			""
-		} else {
-			"\nOPTIONS\n" + methodTarget.parameters
-					.joinToString("\n$EIGHT_SPACES", prefix = EIGHT_SPACES) { parameter ->
-						val parameterPart = parameter.shellOption?.value
-								?.sorted()
-								?.reversed()
-								?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
-						parameterPart + " [${parameter.type.simpleName.toLowerCase()}]"
-					} + NL
-		}
-		return namePart + synopsisPart + optionsPart
-	}
+        val optionsPart = if (methodTarget.parameters.isEmpty()) {
+            ""
+        } else {
+            "\nOPTIONS\n" + methodTarget.parameters
+                    .joinToString("\n$EIGHT_SPACES", prefix = EIGHT_SPACES) { parameter ->
+                        val parameterPart = parameter.shellOption?.value
+                                ?.sorted()
+                                ?.reversed()
+                                ?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
+                        parameterPart + " [${parameter.type.simpleName.toLowerCase()}]"
+                    } + NL
+        }
+        return namePart + synopsisPart + optionsPart
+    }
 
-	private fun forAllCommands(): String {
-		val allCommands = context.commands()
-		val otherCommands = allCommands.filter { !it.isBuiltin() }
-				.joinToString(NL) { FOUR_SPACES + it.toHelp() }
-		val builtinCommands = allCommands.filter { it.isBuiltin() }
-				.joinToString(NL) { FOUR_SPACES + it.toHelp() }
+    private fun forAllCommands(): String {
+        val allCommands = context.commands()
+        val otherCommands = allCommands.filter { !it.isBuiltin() }
+                .joinToString(NL) { FOUR_SPACES + it.toHelp() }
+        val builtinCommands = allCommands.filter { it.isBuiltin() }
+                .joinToString(NL) { FOUR_SPACES + it.toHelp() }
 
-		var result = ""
-		if (otherCommands.isNotBlank()) {
-			result += "Available commands:\n\n$otherCommands\n"
-		}
-		if (otherCommands.isNotBlank() && builtinCommands.isNotBlank()) {
-			result += NL
-		}
-		if (builtinCommands.isNotBlank()) {
-			result += "Builtin commands:\n\n$builtinCommands\n"
-		}
-		return result
-	}
+        var result = ""
+        if (otherCommands.isNotBlank()) {
+            result += "Available commands:\n\n$otherCommands\n"
+        }
+        if (otherCommands.isNotBlank() && builtinCommands.isNotBlank()) {
+            result += NL
+        }
+        if (builtinCommands.isNotBlank()) {
+            result += "Builtin commands:\n\n$builtinCommands\n"
+        }
+        return result
+    }
 
-	private fun ShellClass.toHelp(): String {
-		val methods = extractMethods()
-		val main = methods.find { it.isMain }
-		val remaining = methods.filter { !it.isMain }
-		val starIndicator = if (main != null) "* " else "  "
-		val helpMessage = main?.help ?: help
-		var command = "$starIndicator$commandId${if (helpMessage.isBlank()) "" else ": $helpMessage"}"
-		if (remaining.isNotEmpty()) {
-			command += NL + remaining.joinToString(NL) { EIGHT_SPACES + it.toHelp() }
-		}
-		return command
-	}
+    private fun ShellClass.toHelp(): String {
+        val methods = extractMethods()
+        val main = methods.find { it.isMain }
+        val remaining = methods.filter { !it.isMain }
+        val starIndicator = if (main != null) "* " else "  "
+        val helpMessage = main?.help ?: help
+        var command = "$starIndicator$commandId${if (helpMessage.isBlank()) "" else ": $helpMessage"}"
+        if (remaining.isNotEmpty()) {
+            command += NL + remaining.joinToString(NL) { EIGHT_SPACES + it.toHelp() }
+        }
+        return command
+    }
 
-	private val MethodTarget.help get() = method.shellMethod().help
+    private val MethodTarget.help get() = method.shellMethod().help
 
-	private fun MethodTarget.toHelp() =
-			"${if (values.isEmpty()) name else values.joinToString(", ") { it }}: $help"
+    private fun MethodTarget.toHelp() =
+            "${if (values.isEmpty()) name else values.joinToString(", ") { it }}: $help"
 }
 
 private const val NL = "\n"
