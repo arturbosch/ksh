@@ -1,12 +1,12 @@
 package io.gitlab.arturbosch.ksh.api
 
-import java.lang.reflect.Parameter
-
 /**
  * @author Artur Bosch
  */
 interface ParameterResolver : WithPriority {
 
-    fun supports(parameter: Parameter): Boolean
+    @Throws(UnsupportedParameter::class)
+    fun supports(methodTarget: MethodTarget): Boolean
+
     fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?>
 }

@@ -4,6 +4,7 @@ import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
+import io.gitlab.arturbosch.ksh.api.UnsupportedParameter
 import io.gitlab.arturbosch.ksh.converters.Conversions
 import java.lang.reflect.Parameter
 
@@ -20,15 +21,24 @@ class DefaultParameterResolver : ParameterResolver {
         val parameter: Parameter
     )
 
-    override fun supports(parameter: Parameter): Boolean = converter.supports(parameter)
+    override fun supports(methodTarget: MethodTarget): Boolean {
+        val unsupported = methodTarget.parameters
+                .filterNot { converter.supports(it) }
+        if (unsupported.isNotEmpty()) {
+            throw UnsupportedParameter(unsupported)
+        }
+        return true
+    }
 
     override fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?> {
         val prefix = methodTarget.parameterPrefix()
-        val allKeys = methodTarget.parameters.flatMap { it.prefixedValues(prefix) }
+        val allKeys = methodTarget.parameters
+                .flatMap { it.prefixedValues(prefix) }
 
         val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
         val words = input.words().subList(input.parameterStartIndex, input.size())
         val unusedWords = mutableSetOf<String>()
+
         var nextIndex = 0
         for ((index, word) in words.withIndex()) {
             if (index < nextIndex) {

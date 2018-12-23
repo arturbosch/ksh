@@ -1,13 +1,13 @@
 package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.Debugging
-import io.gitlab.arturbosch.ksh.ShellException
 import io.gitlab.arturbosch.ksh.api.CallTarget
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
-import io.gitlab.arturbosch.ksh.loadParameterResolver
+import io.gitlab.arturbosch.ksh.api.ShellException
+import io.gitlab.arturbosch.ksh.loadParameterResolvers
 import kotlin.properties.Delegates
 
 /**
@@ -26,7 +26,7 @@ open class DefaultResolver : Resolver {
         commands.map { it to it.extractMethods() }.toMap()
     }
 
-    private val parameterResolver = loadParameterResolver().first() // TODO support more
+    private val parameterResolvers = loadParameterResolvers()
 
     override fun init(commands: List<ShellClass>): Resolver {
         this.commands = commands
@@ -40,6 +40,10 @@ open class DefaultResolver : Resolver {
         val (methodTarget, unnamed) =
                 findMatchingMethod(provider, methodName)
 
+        val parameterResolver =
+                runCatching { parameterResolvers.first { it.supports(methodTarget) } }
+                        .getOrThrow()
+
         val arguments = if (unnamed) {
             input.markParametersStartAfter(className)
             parameterResolver.evaluate(methodTarget, input)
@@ -48,9 +52,8 @@ open class DefaultResolver : Resolver {
             parameterResolver.evaluate(methodTarget, input)
         }
 
-        return CallTarget(provider, methodTarget, arguments).apply {
-            Debugging.log { provider }
-        }
+        Debugging.log { provider }
+        return CallTarget(provider, methodTarget, arguments)
     }
 
     private fun findMatchingClass(name: String): ShellClass {
@@ -63,7 +66,7 @@ open class DefaultResolver : Resolver {
     ): Pair<MethodTarget, Boolean> {
 
         val methods = providerToMethods[provider]
-                ?: throw ShellException("'$provider' has no methods.")
+            ?: throw ShellException("'$provider' has no methods.")
 
         var searchedMethod: MethodTarget? = null
         var mainMethod: MethodTarget? = null
@@ -77,8 +80,8 @@ open class DefaultResolver : Resolver {
         }
 
         return searchedMethod?.let { it to false }
-                ?: mainMethod?.let { it to true }
-                ?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
-                        "\n\tPossible options are: " + methods.joinToString(",") { it.name })
+            ?: mainMethod?.let { it to true }
+            ?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
+                    "\n\tPossible options are: " + methods.joinToString(",") { it.name })
     }
 }
