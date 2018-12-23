@@ -13,7 +13,7 @@ class JLineInput(private val parsedLine: ParsedLine) : InputLine {
     override fun markParametersStartAfter(word: String) {
         val (index, _) = words().withIndex()
                 .find { (_, value) -> value == word }
-                ?: throw IllegalArgumentException("word must be inside input line")
+            ?: throw IllegalArgumentException("word must be inside input line")
         parameterStartIndex = index + 1
     }
 

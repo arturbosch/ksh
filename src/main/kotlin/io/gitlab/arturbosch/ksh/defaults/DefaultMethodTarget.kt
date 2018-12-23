@@ -31,4 +31,4 @@ fun Method.toShellMethod(): MethodTarget {
 }
 
 fun Method.shellMethod(): ShellMethod = getAnnotation(ShellMethod::class.java)
-        ?: throw IllegalStateException("method '${this.name}' misses shell annotation")
+    ?: throw IllegalStateException("method '${this.name}' misses shell annotation")

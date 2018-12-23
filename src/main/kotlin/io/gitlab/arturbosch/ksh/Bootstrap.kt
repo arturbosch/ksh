@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh
 
+import io.gitlab.arturbosch.ksh.api.ExitShell
 import io.gitlab.arturbosch.ksh.api.KShellContext
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException

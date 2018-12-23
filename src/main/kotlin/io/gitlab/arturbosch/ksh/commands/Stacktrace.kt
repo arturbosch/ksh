@@ -2,9 +2,9 @@ package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.LastExceptionState
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
+import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.writeln
 import org.jline.terminal.Terminal
 import kotlin.properties.Delegates

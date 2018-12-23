@@ -4,6 +4,7 @@ import io.gitlab.arturbosch.ksh.api.CallTarget
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.api.ShellClass
+import io.gitlab.arturbosch.ksh.api.ShellException
 import io.gitlab.arturbosch.ksh.defaults.JLineInput
 import org.jline.reader.ParsedLine
 import org.jline.reader.Parser
