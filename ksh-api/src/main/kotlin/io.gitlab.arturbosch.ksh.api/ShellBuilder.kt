@@ -1,6 +1,7 @@
 package io.gitlab.arturbosch.ksh.api
 
 import org.jline.reader.LineReader
+import org.jline.reader.LineReaderBuilder
 import org.jline.terminal.Terminal
 
 /**
@@ -11,5 +12,9 @@ interface ShellBuilder : WithPriority {
     fun createPrompt(): Prompt
     fun createResolver(): Resolver
     fun createTerminal(): Terminal
-    fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader
+    fun createLineReader(
+        prompt: Prompt,
+        terminal: Terminal,
+        init: (LineReaderBuilder.() -> Unit)? = null
+    ): LineReader
 }

@@ -2,6 +2,9 @@ package io.gitlab.arturbosch.ksh
 
 import io.gitlab.arturbosch.ksh.api.KShellContext
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
+import io.gitlab.arturbosch.ksh.defaults.DefaultCompleter
+import org.jline.builtins.Completers
+import org.jline.reader.impl.completer.AggregateCompleter
 
 /**
  * @author Artur Bosch
@@ -18,18 +21,27 @@ fun bootstrap(args: Array<String>) {
 internal fun ShellBuilder.initializeShellContext(): KShellContext {
     val prompt = createPrompt()
     Debugging.isDebug = prompt.debug
+
     val terminal = createTerminal()
     Debugging.terminal = terminal
-    val lineReader = createLineReader(prompt, terminal)
 
-    val shellContext = loadShellContext().apply {
+    val shellContext = loadShellContext()
+    val commands = shellContext.commands()
+    CommandVerifier(commands)
+
+    val lineReader = createLineReader(prompt, terminal) {
+        this.completer(AggregateCompleter(
+                DefaultCompleter(commands),
+                Completers.FileNameCompleter()
+        ))
+    }
+
+    shellContext.apply {
         this.terminal = terminal
         this.prompt = prompt
         this.reader = lineReader
     }
 
-    val commands = shellContext.commands()
-    CommandVerifier(commands)
     commands.forEach { it.init(shellContext) }
 
     val resolver = createResolver().init(commands)

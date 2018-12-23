@@ -5,6 +5,7 @@ import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.loadPrompt
 import io.gitlab.arturbosch.ksh.loadResolver
+import org.jline.builtins.Completers
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.DefaultParser
@@ -27,7 +28,11 @@ open class DefaultShellBuilder : ShellBuilder {
 
     override fun createTerminal(): Terminal = TerminalBuilder.terminal()
 
-    override fun createLineReader(prompt: Prompt, terminal: Terminal): LineReader {
+    override fun createLineReader(
+        prompt: Prompt,
+        terminal: Terminal,
+        init: (LineReaderBuilder.() -> Unit)?
+    ): LineReader {
         val history = DefaultHistory()
         val reader = LineReaderBuilder.builder()
                 .appName(prompt.applicationName)
@@ -35,6 +40,7 @@ open class DefaultShellBuilder : ShellBuilder {
                 .history(history)
                 .variable(LineReader.HISTORY_FILE, prompt.historyFile)
                 .parser(DefaultParser())
+                .apply { init?.invoke(this) }
                 .build()
 
         history.attach(reader)

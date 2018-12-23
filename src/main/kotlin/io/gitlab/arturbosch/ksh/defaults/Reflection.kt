@@ -52,3 +52,10 @@ fun Parameter.prefixedValues(prefix: String): Set<String> {
         setOf(prefix + name)
     }
 }
+
+fun MethodTarget.allParameterValues(): Set<String> {
+    val prefix = this.parameterPrefix()
+    return this.parameters.flatMap { it.prefixedValues(prefix) }
+            .filterNot { it.isEmpty() }
+            .toSet()
+}
