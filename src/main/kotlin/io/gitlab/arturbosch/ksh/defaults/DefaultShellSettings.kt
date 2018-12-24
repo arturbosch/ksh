@@ -1,7 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.ShellSettings
-import io.gitlab.arturbosch.ksh.loadedCommands
 import org.jline.reader.Completer
 
 /**
@@ -13,5 +12,5 @@ class DefaultShellSettings : ShellSettings {
     override val historyFile: String = "./ksh-history"
     override val priority: Int = -1
     override fun prompt(): String = "ksh> "
-    override fun customCompleter(): Completer? = DefaultCompleter(loadedCommands)
+    override fun customCompleter(): Completer? = DefaultCommandAndPathCompleter()
 }

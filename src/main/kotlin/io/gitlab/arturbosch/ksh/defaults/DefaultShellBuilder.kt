@@ -3,7 +3,6 @@ package io.gitlab.arturbosch.ksh.defaults
 import io.gitlab.arturbosch.ksh.api.Shell
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellSettings
-import io.gitlab.arturbosch.ksh.loadedCommands
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.DefaultParser
@@ -23,13 +22,14 @@ open class DefaultShellBuilder : ShellBuilder {
     override fun createShell(settings: ShellSettings): Shell {
         val history = DefaultHistory()
         val terminal = createTerminal()
+        val completer = settings.customCompleter() ?: DefaultCommandAndPathCompleter()
         val reader = LineReaderBuilder.builder()
                 .appName(settings.applicationName)
                 .terminal(terminal)
                 .history(history)
                 .variable(LineReader.HISTORY_FILE, settings.historyFile)
                 .parser(DefaultParser())
-                .completer(settings.customCompleter() ?: DefaultCompleter(loadedCommands))
+                .completer(completer)
                 .build()
         history.attach(reader)
         return DefaultShell(terminal, reader)

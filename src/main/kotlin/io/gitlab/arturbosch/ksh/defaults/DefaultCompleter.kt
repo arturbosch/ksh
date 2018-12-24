@@ -93,12 +93,12 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
         if (line.words().isEmpty()) {
             allCommandOptions()
         } else {
-            val wordsBefore = line.words().subList(0, line.wordIndex())
+            val words = line.words().subList(0, line.wordIndex())
             when {
-                wordsBefore.isEmpty() -> allCommandOptions()
-                wordsBefore.size == 1 -> optionsForCommand(wordsBefore[0])
-                wordsBefore.size == 2 -> optionsForSubCommand(wordsBefore[0], wordsBefore[1])
-                else -> moreOptions(wordsBefore[0], wordsBefore[1], wordsBefore.subList(2, wordsBefore.size))
+                words.isEmpty() -> allCommandOptions()
+                words.size == 1 -> optionsForCommand(words[0])
+                words.size == 2 -> optionsForSubCommand(words[0], words[1])
+                else -> moreOptions(words[0], words[1], words.subList(2, words.size))
             }
         }
 
