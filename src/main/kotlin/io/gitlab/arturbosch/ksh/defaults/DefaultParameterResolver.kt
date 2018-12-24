@@ -36,7 +36,9 @@ class DefaultParameterResolver : ParameterResolver {
                 .flatMap { it.prefixedValues(prefix) }
 
         val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
-        val words = input.words().subList(input.parameterStartIndex, input.size())
+        val words = input.words()
+                .subList(input.parameterStartIndex, input.size())
+                .filter { it.isNotEmpty() }
         val unusedWords = mutableSetOf<String>()
 
         var nextIndex = 0
@@ -49,6 +51,9 @@ class DefaultParameterResolver : ParameterResolver {
                 val arity = parameter.arity()
                 val from = index + 1
                 val to = from + arity
+                check(words.size >= to) {
+                    "not enough arguments for parameter ${parameter.prefixedValues(prefix)}"
+                }
                 val values = words.subList(from, to)
                 methodParameters[parameter] = MethodParameter(word, values, parameter)
                 nextIndex = to

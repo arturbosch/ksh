@@ -45,9 +45,9 @@ fun Parameter.hasBoolType() =
         type == Boolean::class.javaPrimitiveType || type == Boolean::class.java
 
 fun Parameter.prefixedValues(prefix: String): Set<String> {
-    val option = shellOption
-    return if (option != null && option.value.isNotEmpty()) {
-        option.value.toSet()
+    val options = shellOption?.value?.filterNot { it.isEmpty() }
+    return if (options != null && options.isNotEmpty()) {
+        options.toSet()
     } else {
         setOf(prefix + name)
     }
@@ -55,7 +55,5 @@ fun Parameter.prefixedValues(prefix: String): Set<String> {
 
 fun MethodTarget.allParameterValues(): Set<String> {
     val prefix = this.parameterPrefix()
-    return this.parameters.flatMap { it.prefixedValues(prefix) }
-            .filterNot { it.isEmpty() }
-            .toSet()
+    return this.parameters.flatMap { it.prefixedValues(prefix) }.toSet()
 }
