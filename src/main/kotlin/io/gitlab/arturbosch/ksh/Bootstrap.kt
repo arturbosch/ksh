@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.api.ExitShell
 import io.gitlab.arturbosch.ksh.api.Context
+import io.gitlab.arturbosch.ksh.api.ExitShell
 import org.jline.reader.EndOfFileException
 import org.jline.reader.UserInterruptException
 import kotlin.system.exitProcess
@@ -22,7 +22,7 @@ class Bootstrap(private val context: Context) {
             } catch (e: ExitShell) {
                 exitProcess(e.exitCode)
             } catch (e: RuntimeException) {
-                context.writeln(e.toString())
+                context.writeln(e.message)
                 LastExceptionState.error = e
             }
         }

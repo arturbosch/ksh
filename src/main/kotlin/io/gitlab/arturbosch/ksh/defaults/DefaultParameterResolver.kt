@@ -52,7 +52,7 @@ class DefaultParameterResolver : ParameterResolver {
                 val from = index + 1
                 val to = from + arity
                 check(words.size >= to) {
-                    "not enough arguments for parameter ${parameter.prefixedValues(prefix)}"
+                    "Not enough arguments for parameter ${parameter.prefixedValues(prefix)}"
                 }
                 val values = words.subList(from, to)
                 methodParameters[parameter] = MethodParameter(word, values, parameter)
