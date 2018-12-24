@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
-import io.gitlab.arturbosch.ksh.api.KShellContext
+import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
@@ -20,9 +20,9 @@ import kotlin.properties.Delegates
 @BuiltinCommand
 class Help : ShellClass {
 
-    private var context: KShellContext by Delegates.notNull()
+    private var context: Context by Delegates.notNull()
 
-    override fun init(context: KShellContext) {
+    override fun init(context: Context) {
         this.context = context
     }
 

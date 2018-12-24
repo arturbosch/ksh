@@ -1,11 +1,9 @@
 package io.gitlab.arturbosch.ksh.defaults
 
-import io.gitlab.arturbosch.ksh.api.Prompt
-import io.gitlab.arturbosch.ksh.api.Resolver
+import io.gitlab.arturbosch.ksh.api.Shell
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
-import io.gitlab.arturbosch.ksh.loadPrompt
-import io.gitlab.arturbosch.ksh.loadResolver
-import org.jline.builtins.Completers
+import io.gitlab.arturbosch.ksh.api.ShellSettings
+import io.gitlab.arturbosch.ksh.loadedCommands
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.DefaultParser
@@ -20,30 +18,25 @@ open class DefaultShellBuilder : ShellBuilder {
 
     override val priority: Int = -1
 
-    override fun createPrompt(): Prompt =
-            loadPrompt() ?: throw IllegalStateException("No prompt provider found!")
-
-    override fun createResolver(): Resolver =
-            loadResolver() ?: throw IllegalStateException("No resolver found!")
-
     override fun createTerminal(): Terminal = TerminalBuilder.terminal()
 
-    override fun createLineReader(
-        prompt: Prompt,
-        terminal: Terminal,
-        init: (LineReaderBuilder.() -> Unit)?
-    ): LineReader {
+    override fun createShell(settings: ShellSettings): Shell {
         val history = DefaultHistory()
+        val terminal = createTerminal()
         val reader = LineReaderBuilder.builder()
-                .appName(prompt.applicationName)
+                .appName(settings.applicationName)
                 .terminal(terminal)
                 .history(history)
-                .variable(LineReader.HISTORY_FILE, prompt.historyFile)
+                .variable(LineReader.HISTORY_FILE, settings.historyFile)
                 .parser(DefaultParser())
-                .apply { init?.invoke(this) }
+                .completer(settings.customCompleter() ?: DefaultCompleter(loadedCommands))
                 .build()
-
         history.attach(reader)
-        return reader
+        return DefaultShell(terminal, reader)
     }
 }
+
+open class DefaultShell(
+    override val terminal: Terminal,
+    override val lineReader: LineReader
+) : Shell

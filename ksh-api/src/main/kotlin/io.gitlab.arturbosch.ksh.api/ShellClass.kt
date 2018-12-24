@@ -7,5 +7,5 @@ interface ShellClass {
 
     val commandId: String get() = this.javaClass.simpleName.toLowerCase()
     val help: String get() = ""
-    fun init(context: KShellContext) {}
+    fun init(context: Context) {}
 }

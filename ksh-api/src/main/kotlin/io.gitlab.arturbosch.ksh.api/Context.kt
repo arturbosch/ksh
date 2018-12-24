@@ -7,9 +7,9 @@ import kotlin.properties.Delegates
 /**
  * @author Artur Bosch
  */
-abstract class KShellContext : WithPriority {
+abstract class Context : WithPriority {
 
-    var prompt: Prompt by Delegates.notNull()
+    var settings: ShellSettings by Delegates.notNull()
     var reader: LineReader by Delegates.notNull()
     var terminal: Terminal by Delegates.notNull()
     var resolver: Resolver by Delegates.notNull()

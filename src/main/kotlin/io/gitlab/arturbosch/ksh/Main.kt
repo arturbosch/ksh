@@ -1,10 +1,7 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.api.KShellContext
+import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
-import io.gitlab.arturbosch.ksh.defaults.DefaultCompleter
-import org.jline.builtins.Completers
-import org.jline.reader.impl.completer.AggregateCompleter
 
 /**
  * @author Artur Bosch
@@ -12,39 +9,30 @@ import org.jline.reader.impl.completer.AggregateCompleter
 fun main(args: Array<String>) = bootstrap(args)
 
 @Suppress("UNUSED_PARAMETER")
-fun bootstrap(args: Array<String>) {
-    val shellBuilder = loadShellBuilder()
-    val context = shellBuilder.initializeShellContext()
+fun bootstrap(args: Array<String> = emptyArray()) {
+    val context = loadShellBuilder().initializeShellContext()
     Bootstrap(context).start()
 }
 
-internal fun ShellBuilder.initializeShellContext(): KShellContext {
-    val prompt = createPrompt()
-    Debugging.isDebug = prompt.debug
+internal fun ShellBuilder.initializeShellContext(): Context {
+    val settings = loadSettings()
+    Debugging.isDebug = settings.debug
 
-    val terminal = createTerminal()
-    Debugging.terminal = terminal
+    val shell = createShell(settings)
+    Debugging.terminal = shell.terminal
 
     val shellContext = loadShellContext()
     val commands = shellContext.commands()
     CommandVerifier(commands)
 
-    val lineReader = createLineReader(prompt, terminal) {
-        this.completer(AggregateCompleter(
-                DefaultCompleter(commands),
-                Completers.FileNameCompleter()
-        ))
-    }
-
     shellContext.apply {
-        this.terminal = terminal
-        this.prompt = prompt
-        this.reader = lineReader
+        this.terminal = shell.terminal
+        this.settings = settings
+        this.reader = shell.lineReader
     }
 
     commands.forEach { it.init(shellContext) }
 
-    val resolver = createResolver().init(commands)
-    shellContext.resolver = resolver
+    shellContext.resolver = loadResolver().init(commands)
     return shellContext
 }

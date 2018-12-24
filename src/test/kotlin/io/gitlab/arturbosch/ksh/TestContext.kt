@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh
 
-import io.gitlab.arturbosch.ksh.api.KShellContext
+import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.defaults.DefaultShellBuilder
 import io.gitlab.arturbosch.kutils.resourceAsStream
 import org.jline.terminal.Terminal
@@ -23,7 +23,7 @@ class TestShellBuilder(
 fun testContext(builder: DefaultShellBuilder = TestShellBuilder()) =
         builder.initializeShellContext()
 
-inline fun <reified T> KShellContext.get() = commands().find { it is T } as? T
+inline fun <reified T> Context.get() = commands().find { it is T } as? T
     ?: throw IllegalStateException("No such command '${T::class.java}'.")
 
 fun resourceAsTmpFile(resourceName: String): File {

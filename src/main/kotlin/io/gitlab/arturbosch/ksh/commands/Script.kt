@@ -1,7 +1,7 @@
 package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
-import io.gitlab.arturbosch.ksh.api.KShellContext
+import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
@@ -23,9 +23,9 @@ class Script : ShellClass {
     override val commandId: String = "!"
 
     private val sep = java.lang.System.lineSeparator()
-    private var context: KShellContext by single()
+    private var context: Context by single()
 
-    override fun init(context: KShellContext) {
+    override fun init(context: Context) {
         this.context = context
     }
 
