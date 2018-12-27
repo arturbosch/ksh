@@ -82,7 +82,9 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
         fun moreOptions(command: String, subCommand: String, usedOptions: MutableList<String>) {
             val shellClass = possibleCommands[command] ?: return
             val methods = commandMethodCache.getOrPut(shellClass) { shellClass.extractMethods() }
-            val called = methods.find { it.name == subCommand } ?: return
+            val called = methods.find { it.name == subCommand }
+                ?: methods.find { it.isMain }
+                ?: return
             val freeOptions = called.allParameterValues().filter { it !in usedOptions }
             when (evaluateBuffer()) {
                 Buffer.Empty, Buffer.OptionStart -> fillPossibilities(freeOptions)

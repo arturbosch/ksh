@@ -44,7 +44,7 @@ class Script : ShellClass {
 
     @ShellMethod(help = "Allows to execute ksh commands provided by a file.")
     fun file(
-        @ShellOption([""], help = "Path to a ksh script") scriptName: String
+        @ShellOption(["", "--script"], help = "Path to a ksh script") scriptName: String
     ) = try {
         context.interpret(scriptName.asPath().readLines())
         context.terminal.flush()
