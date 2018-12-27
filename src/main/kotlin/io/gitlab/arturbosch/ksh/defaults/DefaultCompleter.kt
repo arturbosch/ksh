@@ -13,16 +13,13 @@ import java.util.WeakHashMap
  */
 class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
 
-    private val possibleCommands =
-            commands.fold(HashMap<String, ShellClass>()) { acc, cur ->
-                acc[cur.commandId] = cur
-                acc
-            }
-
+    private val possibleCommands: HashMap<String, ShellClass> = HashMap()
     private val commandMethodCache = WeakHashMap<ShellClass, List<MethodTarget>>()
 
-    enum class Buffer {
-        Empty, OptionStart, Word
+    init {
+        for (command in commands) {
+            possibleCommands[command.commandId] = command
+        }
     }
 
     override fun complete(
@@ -30,23 +27,57 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
         line: ParsedLine,
         candidates: MutableList<Candidate>
     ) {
+        val words = line.words().subList(0, line.wordIndex())
+        Completer(
+                possibleCommands,
+                commandMethodCache,
+                line,
+                candidates
+        ).decide(words)
+    }
 
-        fun fillPossibilities(pos: Collection<String>) = candidates.addAll(pos.map { Candidate(it) })
-        fun evaluateBuffer(): Buffer {
-            val word = line.word().substring(0, line.wordCursor())
-            return when {
-                word.isEmpty() -> Buffer.Empty
-                word.startsWith("-") -> Buffer.OptionStart
-                else -> Buffer.Word
+    enum class WordBuffer {
+        Empty, OptionStart, Text
+    }
+
+    private class Completer(
+        val commands: Map<String, ShellClass>,
+        val cache: WeakHashMap<ShellClass, List<MethodTarget>>,
+        val line: ParsedLine,
+        val candidates: MutableList<Candidate>
+    ) {
+
+        fun decide(words: List<String>) {
+            if (words.isEmpty()) {
+                allCommandOptions()
+            } else {
+                when {
+                    words.isEmpty() -> allCommandOptions()
+                    words.size == 1 -> optionsForCommand(words[0])
+                    words.size == 2 -> optionsForSubCommand(words[0], words[1])
+                    else -> moreOptions(words[0], words[1], words.subList(2, words.size))
+                }
             }
         }
 
-        fun allCommandOptions() = fillPossibilities(possibleCommands.keys)
-        fun optionsForCommand(command: String) {
-            val shellClass = possibleCommands[command] ?: return
-            val methods = commandMethodCache.getOrPut(shellClass) { shellClass.extractMethods() }
-            when (evaluateBuffer()) {
-                Buffer.Empty -> {
+        private fun fillPossibilities(pos: Collection<String>): Boolean = candidates.addAll(pos.map { Candidate(it) })
+
+        private fun allCommandOptions() = fillPossibilities(commands.keys)
+
+        private fun evaluateCurrentWord(): WordBuffer {
+            val word = line.word().substring(0, line.wordCursor())
+            return when {
+                word.isEmpty() -> WordBuffer.Empty
+                word.startsWith("-") -> WordBuffer.OptionStart
+                else -> WordBuffer.Text
+            }
+        }
+
+        private fun optionsForCommand(command: String) {
+            val shellClass = commands[command] ?: return
+            val methods = cache.getOrPut(shellClass) { shellClass.extractMethods() }
+            when (evaluateCurrentWord()) {
+                WordBuffer.Empty -> {
                     val options = mutableSetOf<String>()
                     for (method in methods) {
                         if (method.isMain) {
@@ -58,8 +89,8 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
                     }
                     fillPossibilities(options)
                 }
-                Buffer.OptionStart -> fillPossibilities(methods.find { it.isMain }?.allParameterValues().orEmpty())
-                Buffer.Word -> {
+                WordBuffer.OptionStart -> fillPossibilities(methods.find { it.isMain }?.allParameterValues().orEmpty())
+                WordBuffer.Text -> {
                     val mainMethod = methods.find { it.isMain }
                     val mainOptions = mainMethod?.values?.filter { it.startsWith(line.word()) }.orEmpty()
                     val methodOptions = methods.map { it.name }.filter { it.startsWith(line.word()) }
@@ -69,40 +100,27 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
             }
         }
 
-        fun optionsForSubCommand(command: String, subCommand: String) {
-            val shellClass = possibleCommands[command] ?: return
-            val methods = commandMethodCache.getOrPut(shellClass) { shellClass.extractMethods() }
+        private fun optionsForSubCommand(command: String, subCommand: String) {
+            val shellClass = commands[command] ?: return
+            val methods = cache.getOrPut(shellClass) { shellClass.extractMethods() }
             val called = methods.find { it.name == subCommand } ?: return
-            when (evaluateBuffer()) {
-                Buffer.Empty, Buffer.OptionStart -> fillPossibilities(called.allParameterValues())
-                Buffer.Word -> fillPossibilities(called.allParameterValues().filter { it.startsWith(line.word()) })
+            when (evaluateCurrentWord()) {
+                WordBuffer.Empty, WordBuffer.OptionStart -> fillPossibilities(called.allParameterValues())
+                WordBuffer.Text -> fillPossibilities(called.allParameterValues().filter { it.startsWith(line.word()) })
             }
         }
 
-        fun moreOptions(command: String, subCommand: String, usedOptions: MutableList<String>) {
-            val shellClass = possibleCommands[command] ?: return
-            val methods = commandMethodCache.getOrPut(shellClass) { shellClass.extractMethods() }
+        private fun moreOptions(command: String, subCommand: String, usedOptions: List<String>) {
+            val shellClass = commands[command] ?: return
+            val methods = cache.getOrPut(shellClass) { shellClass.extractMethods() }
             val called = methods.find { it.name == subCommand }
                 ?: methods.find { it.isMain }
                 ?: return
             val freeOptions = called.allParameterValues().filter { it !in usedOptions }
-            when (evaluateBuffer()) {
-                Buffer.Empty, Buffer.OptionStart -> fillPossibilities(freeOptions)
-                Buffer.Word -> fillPossibilities(freeOptions.filter { it.startsWith(line.word()) })
+            when (evaluateCurrentWord()) {
+                WordBuffer.Empty, WordBuffer.OptionStart -> fillPossibilities(freeOptions)
+                WordBuffer.Text -> fillPossibilities(freeOptions.filter { it.startsWith(line.word()) })
             }
         }
-
-        if (line.words().isEmpty()) {
-            allCommandOptions()
-        } else {
-            val words = line.words().subList(0, line.wordIndex())
-            when {
-                words.isEmpty() -> allCommandOptions()
-                words.size == 1 -> optionsForCommand(words[0])
-                words.size == 2 -> optionsForSubCommand(words[0], words[1])
-                else -> moreOptions(words[0], words[1], words.subList(2, words.size))
-            }
-        }
-
     }
 }
