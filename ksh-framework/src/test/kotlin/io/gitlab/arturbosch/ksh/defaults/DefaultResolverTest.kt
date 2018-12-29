@@ -1,7 +1,10 @@
-package io.gitlab.arturbosch.ksh
+package io.gitlab.arturbosch.ksh.defaults
 
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import io.gitlab.arturbosch.ksh.Conversions
+import io.gitlab.arturbosch.ksh.Hello
+import io.gitlab.arturbosch.ksh.TestResolver
 import org.junit.Test
 import java.nio.file.Path
 

@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh.converters
 
-import assertk.assertions.isNotEmpty
+import assertk.assertions.each
 import org.junit.Test
 import java.io.File
 import java.lang.reflect.Parameter
@@ -23,7 +23,7 @@ class ConverterTest {
                     .parameters
                     .map { it to associateBy(it) }
                     .map { conversions.convert(it.first, it.second) }
-        }.returnedValue { isNotEmpty() }
+        }.returnedValue { each { checkNotNull(it.actual)::class in setOf(Path::class, File::class) } }
     }
 
     private fun associateBy(it: Parameter): String {

@@ -1,6 +1,8 @@
-package io.gitlab.arturbosch.ksh
+package io.gitlab.arturbosch.ksh.defaults
 
 import assertk.assertions.isEqualTo
+import io.gitlab.arturbosch.ksh.Gradle
+import io.gitlab.arturbosch.ksh.TestResolver
 import org.junit.Test
 
 /**

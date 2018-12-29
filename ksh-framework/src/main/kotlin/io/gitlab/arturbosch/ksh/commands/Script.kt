@@ -13,6 +13,7 @@ import io.gitlab.arturbosch.kutils.readLines
 import io.gitlab.arturbosch.kutils.single
 import java.io.File
 import java.io.IOException
+import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
@@ -23,7 +24,7 @@ class Script : ShellClass {
     override val commandId: String = "!"
 
     private val sep = java.lang.System.lineSeparator()
-    private var context: Context by single()
+    private var context: Context by Delegates.notNull()
 
     override fun init(context: Context) {
         this.context = context

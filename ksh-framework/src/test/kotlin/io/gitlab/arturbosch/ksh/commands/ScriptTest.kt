@@ -1,8 +1,11 @@
-package io.gitlab.arturbosch.ksh
+package io.gitlab.arturbosch.ksh.commands
 
 import assertk.assertions.isEqualTo
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
-import io.gitlab.arturbosch.ksh.commands.Script
+import io.gitlab.arturbosch.ksh.TestShellBuilder
+import io.gitlab.arturbosch.ksh.get
+import io.gitlab.arturbosch.ksh.resourceAsTmpFile
+import io.gitlab.arturbosch.ksh.testContext
 import org.junit.Test
 
 /**
