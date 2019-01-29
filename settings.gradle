@@ -1,3 +1,3 @@
+rootProject.name = 'ksh'
 include 'ksh-api'
 include 'ksh-framework'
-
