@@ -3,3 +3,4 @@ ksh.*
 build
 .gradle
 out
+!img/ksh.png
