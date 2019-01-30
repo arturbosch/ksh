@@ -4,7 +4,7 @@ import assertk.assertions.containsAll
 import io.gitlab.arturbosch.ksh.Conversions
 import io.gitlab.arturbosch.ksh.Hello
 import io.gitlab.arturbosch.ksh.api.ShellClass
-import io.gitlab.arturbosch.ksh.testContext
+import io.gitlab.arturbosch.ksh.test.testContext
 import org.jline.reader.Candidate
 import org.jline.reader.Completer
 import org.jline.reader.impl.DefaultParser

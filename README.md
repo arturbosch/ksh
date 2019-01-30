@@ -21,6 +21,8 @@ dependencies {
 }
 ```
 
+Copy the `ksh-template` module for a ksh skeleton project.
+
 ## Bootstrap your shell
 
 ```kotlin
@@ -34,7 +36,7 @@ fun main(args: Array<String>) {
 ## Write your first command and get tab completion for free
 
 ```kotlin
-class Test : ShellClass {
+class Hello : ShellClass {
 
     @ShellMethod(help = "Prints Hello World.")
     fun main() = "Hello World"
@@ -57,3 +59,13 @@ class MySettings : ShellSettings {
 
 const val APP_NAME = "app"
 ```
+
+## Pitfalls
+
+ksh uses heavily the ServiceLoader-Pattern, so make sure to merge all services files. With the shadow plugin you would add to your build.gradle file:
+
+```gradle
+shadowJar {
+    mergeServiceFiles()
+}
+``` 

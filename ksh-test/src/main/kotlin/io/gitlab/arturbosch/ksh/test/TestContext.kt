@@ -1,7 +1,9 @@
-package io.gitlab.arturbosch.ksh
+package io.gitlab.arturbosch.ksh.test
 
 import io.gitlab.arturbosch.ksh.api.Context
+import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.defaults.DefaultShellBuilder
+import io.gitlab.arturbosch.ksh.initializeShellContext
 import io.gitlab.arturbosch.kutils.resourceAsStream
 import org.jline.terminal.Terminal
 import org.jline.terminal.impl.DumbTerminal
@@ -23,12 +25,12 @@ class TestShellBuilder(
 fun testContext(builder: DefaultShellBuilder = TestShellBuilder()) =
         builder.initializeShellContext()
 
-inline fun <reified T> Context.get() = commands().find { it is T } as? T
-    ?: throw IllegalStateException("No such command '${T::class.java}'.")
+inline fun <reified T : ShellClass> Context.get() =
+        commands().find { it is T } as? T
+            ?: throw IllegalStateException("No such command '${T::class.java}'.")
 
 fun resourceAsTmpFile(resourceName: String): File {
     val tempFile = File.createTempFile("ksh", System.currentTimeMillis().toString())
-    resourceAsStream(resourceName)
-            .copyTo(tempFile.outputStream())
+    resourceAsStream(resourceName).copyTo(tempFile.outputStream())
     return tempFile
 }

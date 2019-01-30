@@ -6,15 +6,14 @@ import io.gitlab.arturbosch.ksh.api.ShellBuilder
 /**
  * @author Artur Bosch
  */
-fun main(args: Array<String>) = bootstrap(args)
+fun main() = bootstrap()
 
-@Suppress("UNUSED_PARAMETER")
-fun bootstrap(args: Array<String> = emptyArray()) {
+fun bootstrap() {
     val context = loadShellBuilder().initializeShellContext()
     Bootstrap(context).start()
 }
 
-internal fun ShellBuilder.initializeShellContext(): Context {
+fun ShellBuilder.initializeShellContext(): Context {
     val settings = loadSettings()
     Debugging.isDebug = settings.debug
 
