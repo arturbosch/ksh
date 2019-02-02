@@ -1,7 +1,7 @@
 # ksh
 [ ![Download](https://api.bintray.com/packages/arturbosch/generic/ksh/images/download.svg) ](https://bintray.com/arturbosch/generic/ksh/_latestVersion)
 
-A commandline framework to build shell-like applications
+A framework to build shell-like applications
 
 ![ksh](/img/ksh.png "Ksh in Action")
 
