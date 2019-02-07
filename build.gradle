@@ -30,7 +30,7 @@ subprojects {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+        compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
         testCompile "junit:junit:$junitVersion"
         testCompile "com.willowtreeapps.assertk:assertk:$assertkVersion"
         testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
