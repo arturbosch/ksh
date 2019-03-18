@@ -1,3 +1,4 @@
 io.gitlab.arturbosch.ksh.Hello
 io.gitlab.arturbosch.ksh.Gradle
 io.gitlab.arturbosch.ksh.Conversions
+io.gitlab.arturbosch.ksh.DoubleMain

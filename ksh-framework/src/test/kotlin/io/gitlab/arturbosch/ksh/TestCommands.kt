@@ -12,11 +12,11 @@ class Hello : ShellClass {
 
     @ShellMethod
     fun main(@ShellOption(["--name", "-n", ""]) name: String?): String =
-            "Hello ${name ?: "World"}!"
+        "Hello ${name ?: "World"}!"
 
     @ShellMethod
     fun say(@ShellOption(["--name", "-n", ""], defaultValue = "OMG") name: String): String =
-            "Hello $name!"
+        "Hello $name!"
 
     @ShellMethod
     fun count(
@@ -64,4 +64,15 @@ class Gradle : ShellClass {
         @ShellOption(["-kts", "--kotlin-dsl"], arity = 0, defaultValue = "false") kts: Boolean,
         @ShellOption(["-wd", "--working-dir"], defaultValue = ".") workingDir: String
     ): String = ""
+}
+
+class DoubleMain : ShellClass {
+
+    override val commandId: String = "double"
+
+    @ShellMethod
+    fun main() = "first"
+
+    @ShellMethod(value = ["main"])
+    fun secondMain() = "second"
 }

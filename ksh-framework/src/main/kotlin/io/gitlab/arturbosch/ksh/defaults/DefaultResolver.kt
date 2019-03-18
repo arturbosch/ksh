@@ -38,11 +38,9 @@ open class DefaultResolver : Resolver {
         val provider = findMatchingClass(className)
         val methodName = input.secondWord()
         val (methodTarget, unnamed) =
-                findMatchingMethod(provider, methodName)
+            findMatchingMethod(provider, methodName)
 
-        val parameterResolver =
-                runCatching { parameterResolvers.first { it.supports(methodTarget) } }
-                        .getOrThrow()
+        val parameterResolver = parameterResolvers.first { it.supports(methodTarget) }
 
         val arguments = if (unnamed) {
             input.markParametersStartAfter(className)
@@ -68,20 +66,11 @@ open class DefaultResolver : Resolver {
         val methods = providerToMethods[provider]
             ?: throw ShellException("'$provider' has no methods.")
 
-        var searchedMethod: MethodTarget? = null
-        var mainMethod: MethodTarget? = null
-        for (shellMethod in methods) {
-            if (shellMethod.isMain) {
-                mainMethod = shellMethod
-            }
-            if (shellMethod.hasValue(name)) {
-                searchedMethod = shellMethod
-            }
-        }
+        val searchedMethod: MethodTarget? = methods.firstOrNull { it.hasValue(name) }
 
         return searchedMethod?.let { it to false }
-            ?: mainMethod?.let { it to true }
+            ?: methods.firstOrNull { it.isMain }?.let { it to true }
             ?: throw ShellException("No sub command '$name' found for ${provider.commandId}." +
-                    "\n\tPossible options are: " + methods.joinToString(",") { it.name })
+                "\n\tPossible options are: " + methods.joinToString(",") { it.name })
     }
 }

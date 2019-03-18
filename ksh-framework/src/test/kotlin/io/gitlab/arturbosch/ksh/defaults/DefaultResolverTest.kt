@@ -1,8 +1,10 @@
 package io.gitlab.arturbosch.ksh.defaults
 
 import assertk.assertions.isEqualTo
+import assertk.assertions.isIn
 import assertk.assertions.isInstanceOf
 import io.gitlab.arturbosch.ksh.Conversions
+import io.gitlab.arturbosch.ksh.DoubleMain
 import io.gitlab.arturbosch.ksh.Hello
 import io.gitlab.arturbosch.ksh.test.TestResolver
 import org.junit.Test
@@ -14,7 +16,7 @@ import java.nio.file.Path
 class DefaultResolverTest {
 
     private val resolver = TestResolver()
-            .init(listOf(Hello(), Conversions()))
+        .init(listOf(Hello(), Conversions(), DoubleMain()))
 
     @Test
     fun resolveMainWithOneOptionIdLessParameter() {
@@ -81,5 +83,15 @@ class DefaultResolverTest {
     fun resolvesPathParameters() {
         val target = resolver.evaluate("conversions path this/is/a/path")
         assertk.assert(target!!).isInstanceOf(Path::class)
+    }
+
+    @Test
+    fun resolvesToDefaultMainOnEmptyInput() {
+        assertk.assert(resolver.evaluate("double")).isEqualTo("first")
+    }
+
+    @Test
+    fun resolvedToAnyIfMainIsSpecifiedMoreThanOneTime() {
+        assertk.assert(resolver.evaluate("double main")).isIn("first", "second")
     }
 }
