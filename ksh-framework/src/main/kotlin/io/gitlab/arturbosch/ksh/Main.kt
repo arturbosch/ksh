@@ -22,7 +22,7 @@ fun ShellBuilder.initializeShellContext(): Context {
 
     val shellContext = loadShellContext()
     val commands = shellContext.commands()
-    CommandVerifier(commands)
+    verify(commands)
 
     shellContext.apply {
         this.terminal = shell.terminal
