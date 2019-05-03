@@ -9,10 +9,10 @@ import kotlin.properties.Delegates
  */
 abstract class Context : WithPriority {
 
-    var settings: ShellSettings by Delegates.notNull()
-    var reader: LineReader by Delegates.notNull()
-    var terminal: Terminal by Delegates.notNull()
-    var resolver: Resolver by Delegates.notNull()
+    open var settings: ShellSettings by Delegates.notNull()
+    open var reader: LineReader by Delegates.notNull()
+    open var terminal: Terminal by Delegates.notNull()
+    open var resolver: Resolver by Delegates.notNull()
 
     abstract fun commands(): List<ShellClass>
 }
