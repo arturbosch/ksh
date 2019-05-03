@@ -4,16 +4,18 @@ import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.api.CallTarget
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
+import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellException
-import io.gitlab.arturbosch.ksh.loadParameterResolvers
 import kotlin.properties.Delegates
 
 /**
  * @author Artur Bosch
  */
-open class DefaultResolver : Resolver {
+open class DefaultResolver(
+    private val parameterResolvers: List<ParameterResolver>
+) : Resolver {
 
     override val priority: Int = -1
 
@@ -25,8 +27,6 @@ open class DefaultResolver : Resolver {
     private val providerToMethods by lazy(LazyThreadSafetyMode.NONE) {
         commands.map { it to it.extractMethods() }.toMap()
     }
-
-    private val parameterResolvers = loadParameterResolvers()
 
     override fun init(commands: List<ShellClass>): Resolver {
         this.commands = commands

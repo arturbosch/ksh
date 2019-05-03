@@ -5,15 +5,14 @@ import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.api.UnsupportedParameter
-import io.gitlab.arturbosch.ksh.converters.Conversions
 import java.lang.reflect.Parameter
 
 /**
  * @author Artur Bosch
  */
-class DefaultParameterResolver : ParameterResolver {
-
-    private val converter = Conversions()
+class DefaultParameterResolver(
+    private val conversions: DefaultConversions
+) : ParameterResolver {
 
     data class MethodParameter(
         val option: String,
@@ -23,7 +22,7 @@ class DefaultParameterResolver : ParameterResolver {
 
     override fun supports(methodTarget: MethodTarget): Boolean {
         val unsupported = methodTarget.parameters
-                .filterNot { converter.supports(it) }
+            .filterNot { conversions.supports(it) }
         if (unsupported.isNotEmpty()) {
             throw UnsupportedParameter(unsupported)
         }
@@ -33,12 +32,12 @@ class DefaultParameterResolver : ParameterResolver {
     override fun evaluate(methodTarget: MethodTarget, input: InputLine): List<Any?> {
         val prefix = methodTarget.parameterPrefix()
         val allKeys = methodTarget.parameters
-                .flatMap { it.prefixedValues(prefix) }
+            .flatMap { it.prefixedValues(prefix) }
 
         val methodParameters: MutableMap<Parameter, MethodParameter> = mutableMapOf()
         val words = input.words()
-                .subList(input.parameterStartIndex, input.size())
-                .filter { it.isNotEmpty() }
+            .subList(input.parameterStartIndex, input.size())
+            .filter { it.isNotEmpty() }
         val unusedWords = mutableSetOf<String>()
 
         var nextIndex = 0
@@ -68,7 +67,7 @@ class DefaultParameterResolver : ParameterResolver {
             val firstParam = methodTarget.parameters[0]
             if (firstParam.isUnnamedOption()) {
                 val fullArgument = unusedWords.joinToString(" ")
-                val converted = converter.convert(firstParam, fullArgument)
+                val converted = conversions.convert(firstParam, fullArgument)
                 return listOf(converted)
             }
         }
@@ -84,14 +83,14 @@ class DefaultParameterResolver : ParameterResolver {
                     1 -> values[0]
                     else -> values.joinToString("; ")
                 }
-                converter.convert(parameter, argument)
+                conversions.convert(parameter, argument)
             } else {
                 if (unusedWords.isNotEmpty() && parameter.isUnnamedOption()) {
                     val word = unusedWords.first()
                     unusedWords.remove(word)
-                    converter.convert(parameter, word)
+                    conversions.convert(parameter, word)
                 } else {
-                    converter.convert(parameter, parameter.defaultValue())
+                    conversions.convert(parameter, parameter.defaultValue())
                 }
             }
             Debugging.log(convertedArgument)

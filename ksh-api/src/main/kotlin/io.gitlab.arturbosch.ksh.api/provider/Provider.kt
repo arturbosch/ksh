@@ -7,9 +7,10 @@ import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellSettings
+import io.gitlab.arturbosch.ksh.api.WithPriority
 import io.gitlab.arturbosch.kutils.Injektor
 
-interface Provider<T> {
+interface Provider<T> : WithPriority {
 
     fun provide(container: Injektor): T
 }

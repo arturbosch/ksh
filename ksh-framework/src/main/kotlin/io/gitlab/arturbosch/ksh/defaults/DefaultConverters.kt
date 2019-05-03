@@ -1,4 +1,4 @@
-package io.gitlab.arturbosch.ksh.converters
+package io.gitlab.arturbosch.ksh.defaults
 
 import io.gitlab.arturbosch.ksh.api.Converter
 import java.io.File
