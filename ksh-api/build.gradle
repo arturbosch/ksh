@@ -1,3 +1,4 @@
 dependencies {
     compileOnly "org.jline:jline:$jlineVersion"
+    compileOnly "io.gitlab.arturbosch:kutils:$kutilsVersion"
 }
