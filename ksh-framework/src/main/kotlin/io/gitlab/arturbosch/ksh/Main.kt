@@ -8,6 +8,7 @@ import io.gitlab.arturbosch.ksh.api.ShellSettings
 import io.gitlab.arturbosch.ksh.api.provider.ContextProvider
 import io.gitlab.arturbosch.ksh.api.provider.ResolverProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellBuilderProvider
+import io.gitlab.arturbosch.ksh.api.provider.ShellClassesProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellSettingsProvider
 import io.gitlab.arturbosch.ksh.defaults.DefaultShell
 import io.gitlab.arturbosch.ksh.defaults.DefaultShellBuilder
@@ -17,6 +18,7 @@ import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.TypeReference
 import io.gitlab.arturbosch.kutils.addSingleton
 import io.gitlab.arturbosch.kutils.load
+import io.gitlab.arturbosch.kutils.withSingleton
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 import java.lang.reflect.Type
@@ -52,13 +54,8 @@ fun bootstrap(
     container.addSingleton(term)
     container.addSingleton(reader)
 
+    val loadedCommands = load<ShellClassesProvider>().flatMap { it.provide(container) }
     verify(loadedCommands)
-    val resolver = load<ResolverProvider>()
-        .firstPrioritized()
-        ?.provide(container)
-        ?.init(loadedCommands)
-        ?: throw IllegalStateException("No resolver found!")
-    container.addSingleton(resolver)
 
     val context = load<ContextProvider>().firstPrioritized()?.provide(container)
         ?: object : ContextProvider {
@@ -67,11 +64,17 @@ fun bootstrap(
                 override var settings: ShellSettings = settings
                 override var reader: LineReader = reader
                 override var terminal: Terminal = term
-                override var resolver: Resolver = resolver
+                override var resolver: Resolver = load<ResolverProvider>()
+                    .firstPrioritized()
+                    ?.provide(container)
+                    ?.init(loadedCommands)
+                    ?: throw IllegalStateException("No resolver found!")
+
                 override fun commands(): List<ShellClass> = loadedCommands
             }
         }.provide(container)
 
+    container.withSingleton(context.resolver).init(loadedCommands)
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }
     return Bootstrap(context)
