@@ -6,10 +6,9 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.interpret
-import io.gitlab.arturbosch.kutils.asPath
 import io.gitlab.arturbosch.kutils.consume
+import io.gitlab.arturbosch.kutils.path
 import io.gitlab.arturbosch.kutils.process
-import java.io.File
 import java.io.IOException
 import kotlin.properties.Delegates
 
@@ -31,11 +30,11 @@ class Script : ShellClass {
     @ShellMethod(help = "Allows to executes arbitrary shell commands.")
     fun main(
         @ShellOption(["", "--command"]) command: String,
-        @ShellOption(["-wd", "--working-dir"]) workDir: File?
+        @ShellOption(["-wd", "--working-dir"]) workDir: String?
     ): String = try {
         val (out, err, status) =
             process(
-                command.split(" "), workDir ?: File(".")
+                command.split(" "), path(workDir ?: ".").toFile()
             ).consume()
         (if (status == 0) out else err).joinToString(sep)
     } catch (ioe: IOException) {
@@ -46,7 +45,7 @@ class Script : ShellClass {
     fun file(
         @ShellOption(["", "--script"], help = "Path to a ksh script") scriptName: String
     ) = try {
-        context.interpret(scriptName.asPath())
+        context.interpret(path(scriptName))
     } catch (ioe: IOException) {
         throw IllegalArgumentException("Error executing script 'command'.", ioe)
     }
