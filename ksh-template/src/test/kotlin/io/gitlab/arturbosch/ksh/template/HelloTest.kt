@@ -9,7 +9,12 @@ class HelloTest {
     private val resolver = TestResolver().init(listOf(Hello()))
 
     @Test
-    fun `hello is printed`() {
+    fun `hello world is printed`() {
         assertEquals("Hello World", resolver.evaluate("hello"))
+    }
+
+    @Test
+    fun `hello name is printed`() {
+        assertEquals("Hello Artur", resolver.evaluate("hello --name Artur"))
     }
 }

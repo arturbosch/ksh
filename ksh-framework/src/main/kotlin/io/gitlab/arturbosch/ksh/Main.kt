@@ -27,8 +27,8 @@ import java.lang.reflect.Type
 fun main() = bootstrap()
 
 fun bootstrap() {
-    val context = bootstrap(DefaultInjektor())
-    Bootstrap(context).start()
+    val bootstrap = bootstrap(DefaultInjektor())
+    bootstrap.runLooping()
 }
 
 fun bootstrap(
@@ -36,7 +36,7 @@ fun bootstrap(
     builder: ShellBuilder = object : ShellBuilderProvider {
         override fun provide(container: Injektor): ShellBuilder = DefaultShellBuilder()
     }.provide(container)
-): Context {
+): Bootstrap {
     val settings = object : ShellSettingsProvider {
         override fun provide(container: Injektor): ShellSettings = DefaultShellSettings()
     }.provide(container)
@@ -69,7 +69,7 @@ fun bootstrap(
 
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }
-    return context
+    return Bootstrap(context)
 }
 
 private operator fun DefaultShell.component2(): LineReader = this.lineReader
