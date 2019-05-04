@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.api
 
+import io.gitlab.arturbosch.kutils.WithPriority
 import io.gitlab.arturbosch.kutils.single
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal

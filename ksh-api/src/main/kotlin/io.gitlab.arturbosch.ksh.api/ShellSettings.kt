@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh.api
 
-import org.jline.reader.Completer
+import io.gitlab.arturbosch.kutils.WithPriority
 
 /**
  * @author Artur Bosch
@@ -11,5 +11,4 @@ interface ShellSettings : WithPriority {
     val applicationName: String
     val historyFile: String
     fun prompt(): String
-    fun customCompleter(): Completer? = null
 }

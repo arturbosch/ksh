@@ -11,21 +11,17 @@ import io.gitlab.arturbosch.ksh.api.provider.ShellBuilderProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellClassesProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellSettingsProvider
 import io.gitlab.arturbosch.ksh.defaults.DefaultShell
-import io.gitlab.arturbosch.ksh.defaults.DefaultShellBuilder
-import io.gitlab.arturbosch.ksh.defaults.DefaultShellSettings
 import io.gitlab.arturbosch.kutils.DefaultInjektor
 import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.TypeReference
 import io.gitlab.arturbosch.kutils.addSingleton
+import io.gitlab.arturbosch.kutils.firstPrioritized
 import io.gitlab.arturbosch.kutils.load
 import io.gitlab.arturbosch.kutils.withSingleton
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
 import java.lang.reflect.Type
 
-/**
- * @author Artur Bosch
- */
 fun main() = bootstrap()
 
 fun bootstrap() {
@@ -34,21 +30,21 @@ fun bootstrap() {
 }
 
 fun bootstrap(
-    container: Injektor,
+    container: Injektor = DefaultInjektor(),
     builder: ShellBuilder =
         load<ShellBuilderProvider>()
             .firstPrioritized()
             ?.provide(container)
-            ?: DefaultShellBuilder()
+            ?: error("no ShellBuilder provided")
 ): Bootstrap {
     val settings = load<ShellSettingsProvider>()
         .firstPrioritized()
         ?.provide(container)
-        ?: DefaultShellSettings()
+        ?: error("no ShellSettings provided")
     container.addSingleton(settings)
     Debugging.isDebug = settings.debug
 
-    val (term, reader) = builder.createShell(settings) as DefaultShell
+    val (term, reader) = builder.createShell(settings, container) as DefaultShell
     Debugging.terminal = term
 
     container.addSingleton(term)
@@ -79,9 +75,6 @@ fun bootstrap(
     loadedCommands.forEach { it.init(context) }
     return Bootstrap(context)
 }
-
-private operator fun DefaultShell.component2(): LineReader = this.lineReader
-private operator fun DefaultShell.component1(): Terminal = this.terminal
 
 class NoopContainer : Injektor {
 

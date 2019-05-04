@@ -47,7 +47,6 @@ class Script : ShellClass {
         @ShellOption(["", "--script"], help = "Path to a ksh script") scriptName: String
     ) = try {
         context.interpret(scriptName.asPath())
-        context.terminal.flush()
     } catch (ioe: IOException) {
         throw IllegalArgumentException("Error executing script 'command'.", ioe)
     }

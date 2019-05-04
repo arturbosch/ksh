@@ -3,6 +3,10 @@ package io.gitlab.arturbosch.ksh.defaults
 import io.gitlab.arturbosch.ksh.api.Shell
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellSettings
+import io.gitlab.arturbosch.ksh.api.provider.CompleterProvider
+import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.firstPrioritized
+import io.gitlab.arturbosch.kutils.load
 import org.jline.reader.LineReader
 import org.jline.reader.LineReaderBuilder
 import org.jline.reader.impl.DefaultParser
@@ -17,20 +21,22 @@ open class DefaultShellBuilder : ShellBuilder {
 
     override val priority: Int = -1
 
-    override fun createTerminal(): Terminal = TerminalBuilder.terminal()
+    open fun createTerminal(): Terminal = TerminalBuilder.terminal()
 
-    override fun createShell(settings: ShellSettings): Shell {
+    override fun createShell(settings: ShellSettings, container: Injektor): Shell {
         val history = DefaultHistory()
         val terminal = createTerminal()
-        val completer = settings.customCompleter() ?: DefaultCommandAndPathCompleter()
+        val completer = load<CompleterProvider>()
+            .firstPrioritized()
+            ?.provide(container)
         val reader = LineReaderBuilder.builder()
-                .appName(settings.applicationName)
-                .terminal(terminal)
-                .history(history)
-                .variable(LineReader.HISTORY_FILE, settings.historyFile)
-                .parser(DefaultParser())
-                .completer(completer)
-                .build()
+            .appName(settings.applicationName)
+            .terminal(terminal)
+            .history(history)
+            .variable(LineReader.HISTORY_FILE, settings.historyFile)
+            .parser(DefaultParser())
+            .completer(completer)
+            .build()
         history.attach(reader)
         return DefaultShell(terminal, reader)
     }
@@ -39,4 +45,8 @@ open class DefaultShellBuilder : ShellBuilder {
 open class DefaultShell(
     override val terminal: Terminal,
     override val lineReader: LineReader
-) : Shell
+) : Shell {
+
+    operator fun component1(): Terminal = this.terminal
+    operator fun component2(): LineReader = this.lineReader
+}

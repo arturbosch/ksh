@@ -7,8 +7,9 @@ import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellSettings
-import io.gitlab.arturbosch.ksh.api.WithPriority
 import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.WithPriority
+import org.jline.reader.Completer
 
 interface Provider<T> : WithPriority {
 
@@ -19,7 +20,7 @@ interface ShellSettingsProvider : Provider<ShellSettings>
 interface ShellBuilderProvider : Provider<ShellBuilder>
 interface ContextProvider : Provider<Context>
 interface ConvertersProvider : Provider<List<Converter<*>>>
-interface CompleterProvider : Provider<ParameterResolver>
+interface CompleterProvider : Provider<Completer>
 interface ParameterResolverProvider : Provider<ParameterResolver>
 interface ResolverProvider : Provider<Resolver>
 interface ShellClassesProvider : Provider<List<ShellClass>>

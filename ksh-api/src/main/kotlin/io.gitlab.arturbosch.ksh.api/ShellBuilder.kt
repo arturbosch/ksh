@@ -1,12 +1,12 @@
 package io.gitlab.arturbosch.ksh.api
 
-import org.jline.terminal.Terminal
+import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.WithPriority
 
 /**
  * @author Artur Bosch
  */
 interface ShellBuilder : WithPriority {
 
-    fun createTerminal(): Terminal
-    fun createShell(settings: ShellSettings): Shell
+    fun createShell(settings: ShellSettings, container: Injektor): Shell
 }
