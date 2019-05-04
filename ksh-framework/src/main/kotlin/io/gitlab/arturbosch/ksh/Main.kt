@@ -33,13 +33,16 @@ fun bootstrap() {
 
 fun bootstrap(
     container: Injektor,
-    builder: ShellBuilder = object : ShellBuilderProvider {
-        override fun provide(container: Injektor): ShellBuilder = DefaultShellBuilder()
-    }.provide(container)
+    builder: ShellBuilder =
+        load<ShellBuilderProvider>()
+            .firstPrioritized()
+            ?.provide(container)
+            ?: DefaultShellBuilder()
 ): Bootstrap {
-    val settings = object : ShellSettingsProvider {
-        override fun provide(container: Injektor): ShellSettings = DefaultShellSettings()
-    }.provide(container)
+    val settings = load<ShellSettingsProvider>()
+        .firstPrioritized()
+        ?.provide(container)
+        ?: DefaultShellSettings()
     container.addSingleton(settings)
     Debugging.isDebug = settings.debug
 
@@ -57,15 +60,17 @@ fun bootstrap(
         ?: throw IllegalStateException("No resolver found!")
     container.addSingleton(resolver)
 
-    val context = object : ContextProvider {
-        override fun provide(container: Injektor): Context = object : Context() {
-            override var settings: ShellSettings = settings
-            override var reader: LineReader = reader
-            override var terminal: Terminal = term
-            override var resolver: Resolver = resolver
-            override fun commands(): List<ShellClass> = loadedCommands
-        }
-    }.provide(container)
+    val context = load<ContextProvider>().firstPrioritized()?.provide(container)
+        ?: object : ContextProvider {
+            override fun provide(container: Injektor): Context = object : Context() {
+                override val priority: Int = Int.MIN_VALUE
+                override var settings: ShellSettings = settings
+                override var reader: LineReader = reader
+                override var terminal: Terminal = term
+                override var resolver: Resolver = resolver
+                override fun commands(): List<ShellClass> = loadedCommands
+            }
+        }.provide(container)
 
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }
