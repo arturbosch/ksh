@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.api.provider
 
+import io.gitlab.arturbosch.ksh.api.Completer
 import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.Converter
 import io.gitlab.arturbosch.ksh.api.ParameterResolver
@@ -9,7 +10,6 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellSettings
 import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.WithPriority
-import org.jline.reader.Completer
 
 interface Provider<T> : WithPriority {
 

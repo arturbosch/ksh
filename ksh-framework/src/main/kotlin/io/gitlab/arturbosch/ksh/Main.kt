@@ -5,6 +5,7 @@ import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellBuilder
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellSettings
+import io.gitlab.arturbosch.ksh.api.provider.CompleterProvider
 import io.gitlab.arturbosch.ksh.api.provider.ContextProvider
 import io.gitlab.arturbosch.ksh.api.provider.ResolverProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellBuilderProvider
@@ -44,7 +45,15 @@ fun bootstrap(
     container.addSingleton(settings)
     Debugging.isDebug = settings.debug
 
-    val (term, reader) = builder.createShell(settings, container) as DefaultShell
+    val completer = load<CompleterProvider>()
+        .firstPrioritized()
+        ?.provide(container)
+        ?: error("no Completer provided")
+
+    val (term, reader) =
+        builder.createShell(settings) {
+            it.completer(completer)
+        } as DefaultShell
     Debugging.terminal = term
 
     container.addSingleton(term)
@@ -71,7 +80,8 @@ fun bootstrap(
             }
         }.provide(container)
 
-    container.withSingleton(context.resolver).init(loadedCommands)
+    container.withSingleton(resolver).init(loadedCommands)
+    container.withSingleton(completer).init(loadedCommands)
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }
     return Bootstrap(context)

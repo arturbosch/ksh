@@ -1,12 +1,12 @@
 package io.gitlab.arturbosch.ksh.api
 
 import io.gitlab.arturbosch.kutils.WithPriority
+import org.jline.reader.Completer as JLineCompleter
 
 /**
  * @author Artur Bosch
  */
-interface Resolver : WithPriority {
+interface Resolver : WithPriority, WithCommands {
 
-    fun init(commands: List<ShellClass>): Resolver
     fun evaluate(input: InputLine): CallTarget
 }

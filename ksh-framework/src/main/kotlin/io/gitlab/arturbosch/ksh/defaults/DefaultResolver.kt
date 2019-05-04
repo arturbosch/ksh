@@ -22,10 +22,9 @@ open class DefaultResolver(
     private lateinit var nameToProvider: Map<String, ShellClass>
     private lateinit var providerToMethods: Map<ShellClass, List<MethodTarget>>
 
-    override fun init(commands: List<ShellClass>): Resolver {
+    override fun init(commands: List<ShellClass>) {
         nameToProvider = commands.toHashMap({ it.commandId }, { it })
         providerToMethods = commands.toHashMap({ it }, { it.extractMethods() })
-        return this
     }
 
     override fun evaluate(input: InputLine): CallTarget {
