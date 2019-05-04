@@ -1,5 +1,7 @@
 package io.gitlab.arturbosch.ksh.api
 
+import io.gitlab.arturbosch.kutils.WithPriority
+
 /**
  * @author Artur Bosch
  */

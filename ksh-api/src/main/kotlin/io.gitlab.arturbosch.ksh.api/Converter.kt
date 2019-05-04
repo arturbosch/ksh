@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.api
 
+import io.gitlab.arturbosch.kutils.WithPriority
 import kotlin.reflect.KClass
 
 /**

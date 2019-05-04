@@ -29,10 +29,10 @@ class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
     ) {
         val words = line.words().subList(0, line.wordIndex())
         Completer(
-                possibleCommands,
-                commandMethodCache,
-                line,
-                candidates
+            possibleCommands,
+            commandMethodCache,
+            line,
+            candidates
         ).decide(words)
     }
 
