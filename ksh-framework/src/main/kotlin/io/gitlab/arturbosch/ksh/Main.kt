@@ -53,19 +53,20 @@ fun bootstrap(
     val loadedCommands = load<ShellClassesProvider>().flatMap { it.provide(container) }
     verify(loadedCommands)
 
+    val resolver = (load<ResolverProvider>()
+        .firstPrioritized()
+        ?.provide(container)
+        ?: throw IllegalStateException("No resolver found!"))
+
     val context = load<ContextProvider>().firstPrioritized()?.provide(container)
         ?: object : ContextProvider {
-            override fun provide(container: Injektor): Context = object : Context() {
+            override fun provide(container: Injektor): Context = object : Context {
                 override val priority: Int = Int.MIN_VALUE
+                override var container: Injektor = container
                 override var settings: ShellSettings = settings
                 override var reader: LineReader = reader
                 override var terminal: Terminal = term
-                override var resolver: Resolver = load<ResolverProvider>()
-                    .firstPrioritized()
-                    ?.provide(container)
-                    ?.init(loadedCommands)
-                    ?: throw IllegalStateException("No resolver found!")
-
+                override var resolver: Resolver = resolver
                 override fun commands(): List<ShellClass> = loadedCommands
             }
         }.provide(container)
