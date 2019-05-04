@@ -8,7 +8,7 @@ import io.gitlab.arturbosch.ksh.api.ParameterResolver
 import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellException
-import kotlin.properties.Delegates
+import io.gitlab.arturbosch.kutils.toHashMap
 
 /**
  * @author Artur Bosch
@@ -19,17 +19,12 @@ open class DefaultResolver(
 
     override val priority: Int = -1
 
-    private var commands: List<ShellClass> by Delegates.notNull()
-
-    private val nameToProvider by lazy(LazyThreadSafetyMode.NONE) {
-        commands.map { it.commandId to it }.toMap()
-    }
-    private val providerToMethods by lazy(LazyThreadSafetyMode.NONE) {
-        commands.map { it to it.extractMethods() }.toMap()
-    }
+    private lateinit var nameToProvider: Map<String, ShellClass>
+    private lateinit var providerToMethods: Map<ShellClass, List<MethodTarget>>
 
     override fun init(commands: List<ShellClass>): Resolver {
-        this.commands = commands
+        nameToProvider = commands.toHashMap({ it.commandId }, { it })
+        providerToMethods = commands.toHashMap({ it }, { it.extractMethods() })
         return this
     }
 
