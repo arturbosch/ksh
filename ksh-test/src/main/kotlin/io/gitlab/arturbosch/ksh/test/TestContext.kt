@@ -24,7 +24,7 @@ class TestShellBuilder(
 }
 
 fun testContext(builder: DefaultShellBuilder = TestShellBuilder()): Context =
-    bootstrap(NoopContainer(), builder)
+    bootstrap(NoopContainer(), builder).context
 
 inline fun <reified T : ShellClass> Context.get() =
     commands().find { it is T } as? T
