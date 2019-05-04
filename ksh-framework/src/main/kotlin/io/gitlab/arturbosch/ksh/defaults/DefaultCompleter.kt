@@ -1,9 +1,10 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import io.gitlab.arturbosch.ksh.api.Completer
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
+import io.gitlab.arturbosch.kutils.toHashMap
 import org.jline.reader.Candidate
-import org.jline.reader.Completer
 import org.jline.reader.LineReader
 import org.jline.reader.ParsedLine
 import java.util.WeakHashMap
@@ -11,15 +12,13 @@ import java.util.WeakHashMap
 /**
  * @author Artur Bosch
  */
-class DefaultCompleter(commands: Collection<ShellClass>) : Completer {
+class DefaultCompleter : Completer {
 
-    private val possibleCommands: HashMap<String, ShellClass> = HashMap()
+    private lateinit var possibleCommands: Map<String, ShellClass>
     private val commandMethodCache = WeakHashMap<ShellClass, List<MethodTarget>>()
 
-    init {
-        for (command in commands) {
-            possibleCommands[command.commandId] = command
-        }
+    override fun init(commands: List<ShellClass>) {
+        possibleCommands = commands.toHashMap({ it.commandId }, { it })
     }
 
     override fun complete(

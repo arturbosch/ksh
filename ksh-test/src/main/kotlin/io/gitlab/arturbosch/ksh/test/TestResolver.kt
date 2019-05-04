@@ -17,8 +17,8 @@ class TestResolver : DefaultResolver(
     private val parser = DefaultParser()
 
     fun evaluate(input: String) = evaluate(JLineInput(parser.parse(input, 0))).invoke()
+}
 
-    override fun init(commands: List<ShellClass>): TestResolver {
-        return super.init(commands) as TestResolver
-    }
+fun testResolver(vararg command: ShellClass): TestResolver {
+    return TestResolver().apply { init(command.toList()) }
 }

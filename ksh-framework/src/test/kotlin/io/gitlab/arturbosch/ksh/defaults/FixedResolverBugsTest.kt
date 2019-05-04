@@ -2,7 +2,7 @@ package io.gitlab.arturbosch.ksh.defaults
 
 import assertk.assertions.isEqualTo
 import io.gitlab.arturbosch.ksh.Gradle
-import io.gitlab.arturbosch.ksh.test.TestResolver
+import io.gitlab.arturbosch.ksh.test.testResolver
 import org.junit.Test
 
 /**
@@ -10,8 +10,7 @@ import org.junit.Test
  */
 class FixedResolverBugsTest {
 
-    private val resolver = TestResolver()
-            .init(listOf(Gradle()))
+    private val resolver = testResolver(Gradle())
 
     @Test
     fun `should skip non flag words after arity is resolved`() {

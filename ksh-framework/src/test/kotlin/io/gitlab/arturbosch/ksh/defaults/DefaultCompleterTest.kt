@@ -16,7 +16,7 @@ import org.junit.Test
 class DefaultCompleterTest {
 
     class DefaultCompleterWrapper(commands: List<ShellClass>) {
-        private val completer: Completer = DefaultCompleter(commands)
+        private val completer: Completer = DefaultCompleter().apply { init(commands) }
         private val parser = DefaultParser()
         private val context = testContext()
 

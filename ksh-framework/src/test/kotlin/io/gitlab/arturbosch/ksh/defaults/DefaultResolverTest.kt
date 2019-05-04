@@ -6,7 +6,7 @@ import assertk.assertions.isInstanceOf
 import io.gitlab.arturbosch.ksh.Conversions
 import io.gitlab.arturbosch.ksh.DoubleMain
 import io.gitlab.arturbosch.ksh.Hello
-import io.gitlab.arturbosch.ksh.test.TestResolver
+import io.gitlab.arturbosch.ksh.test.testResolver
 import org.junit.Test
 import java.nio.file.Path
 
@@ -15,8 +15,7 @@ import java.nio.file.Path
  */
 class DefaultResolverTest {
 
-    private val resolver = TestResolver()
-        .init(listOf(Hello(), Conversions(), DoubleMain()))
+    private val resolver = testResolver(Hello(), Conversions(), DoubleMain())
 
     @Test
     fun resolveMainWithOneOptionIdLessParameter() {
