@@ -6,7 +6,7 @@ import io.gitlab.arturbosch.ksh.defaults.DefaultShellSettings
 import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.withSingleton
 
-class DefaultShellSettingsProvider : ShellSettingsProvider {
+class DefaultShellSettingsProvider : ShellSettingsProvider, WithLowPriority {
 
     override fun provide(container: Injektor): ShellSettings {
         return container.withSingleton(DefaultShellSettings())

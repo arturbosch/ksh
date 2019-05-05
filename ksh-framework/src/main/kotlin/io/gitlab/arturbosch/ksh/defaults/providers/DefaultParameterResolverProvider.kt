@@ -9,7 +9,7 @@ import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.load
 import io.gitlab.arturbosch.kutils.withSingleton
 
-class DefaultParameterResolverProvider : ParameterResolverProvider {
+class DefaultParameterResolverProvider : ParameterResolverProvider, WithLowPriority {
 
     override fun provide(container: Injektor): ParameterResolver {
         val converters = load<ConvertersProvider>().flatMap { it.provide(container) }

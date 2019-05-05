@@ -8,7 +8,7 @@ import io.gitlab.arturbosch.kutils.Injektor
 import io.gitlab.arturbosch.kutils.load
 import io.gitlab.arturbosch.kutils.withSingleton
 
-class DefaultResolverProvider : ResolverProvider {
+class DefaultResolverProvider : ResolverProvider, WithLowPriority {
 
     override fun provide(container: Injektor): Resolver {
         val resolvers = load<ParameterResolverProvider>()

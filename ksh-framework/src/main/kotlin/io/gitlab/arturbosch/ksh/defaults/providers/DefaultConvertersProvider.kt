@@ -11,7 +11,7 @@ import io.gitlab.arturbosch.ksh.defaults.PathConverter
 import io.gitlab.arturbosch.ksh.defaults.StringConverter
 import io.gitlab.arturbosch.kutils.Injektor
 
-class DefaultConvertersProvider : ConvertersProvider {
+class DefaultConvertersProvider : ConvertersProvider, WithLowPriority {
 
     override fun provide(container: Injektor): List<Converter<*>> =
         listOf(
