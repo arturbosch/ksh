@@ -5,6 +5,7 @@ import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.ShellException
 import io.gitlab.arturbosch.ksh.defaults.JLineInput
+import io.gitlab.arturbosch.kutils.get
 import io.gitlab.arturbosch.kutils.streamLines
 import org.jline.reader.ParsedLine
 import org.jline.reader.Parser
@@ -31,11 +32,17 @@ fun Context.parsedLine(): ParsedLine = reader.parsedLine
     ?: throw IllegalStateException("Do not get a 'ParsedLine' before reading a line first.")
 
 fun Context.call(target: CallTarget) {
+    this.takeIf { it.container !is NoopContainer }?.debugCall(target)
     val result = target.invoke()
     if (result != null && result != Unit) {
         writeln(result.toString())
         terminal.flush()
     }
+}
+
+fun Context.debugCall(target: CallTarget) {
+    container.get<Debugging>()
+        .log { "Invoking '${target.methodTarget.name}' on '${target.shellClass.javaClass.simpleName}' with args='${target.arguments}'" }
 }
 
 fun Context.interpret(line: String, parser: Parser = DefaultParser()) {

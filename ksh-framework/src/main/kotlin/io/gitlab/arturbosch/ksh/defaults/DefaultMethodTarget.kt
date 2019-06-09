@@ -1,6 +1,5 @@
 package io.gitlab.arturbosch.ksh.defaults
 
-import io.gitlab.arturbosch.ksh.Debugging
 import io.gitlab.arturbosch.ksh.api.MethodTarget
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
@@ -17,7 +16,6 @@ data class DefaultMethodTarget(
 ) : MethodTarget {
 
     override fun invoke(command: ShellClass, arguments: List<Any?>): Any? {
-        Debugging.log { "Invoking '${method.name}' on '${command.javaClass.simpleName}' with args='$arguments'" }
         return method.invoke(command, *arguments.toTypedArray()) // must be vararg
     }
 }

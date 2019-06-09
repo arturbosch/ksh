@@ -12,8 +12,8 @@ import io.gitlab.arturbosch.ksh.api.provider.ShellBuilderProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellClassesProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellSettingsProvider
 import io.gitlab.arturbosch.ksh.defaults.DefaultShell
-import io.gitlab.arturbosch.kutils.DefaultContainer
 import io.gitlab.arturbosch.kutils.Container
+import io.gitlab.arturbosch.kutils.DefaultContainer
 import io.gitlab.arturbosch.kutils.TypeReference
 import io.gitlab.arturbosch.kutils.addSingleton
 import io.gitlab.arturbosch.kutils.firstPrioritized
@@ -43,7 +43,6 @@ fun bootstrap(
         ?.provide(container)
         ?: error("no ShellSettings provided")
     container.addSingleton(settings)
-    Debugging.isDebug = settings.debug
 
     val completer = load<CompleterProvider>()
         .firstPrioritized()
@@ -54,12 +53,14 @@ fun bootstrap(
         builder.createShell(settings) {
             it.completer(completer)
         } as DefaultShell
-    Debugging.terminal = term
+
+    val debug = container.withSingleton(Debugging(settings.debug, term))
 
     container.addSingleton(term)
     container.addSingleton(reader)
 
     val loadedCommands = load<ShellClassesProvider>().flatMap { it.provide(container) }
+    debug.log { loadedCommands }
     verify(loadedCommands)
 
     val resolvers = load<ResolverProvider>()

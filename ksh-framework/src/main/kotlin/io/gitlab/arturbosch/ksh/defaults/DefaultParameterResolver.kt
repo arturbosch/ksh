@@ -11,7 +11,8 @@ import java.lang.reflect.Parameter
  * @author Artur Bosch
  */
 class DefaultParameterResolver(
-    private val conversions: DefaultConversions
+    private val conversions: DefaultConversions,
+    private val debugging: Debugging? = null
 ) : ParameterResolver {
 
     data class MethodParameter(
@@ -93,7 +94,7 @@ class DefaultParameterResolver(
                     conversions.convert(parameter, parameter.defaultValue())
                 }
             }
-            Debugging.log(convertedArgument)
+            debugging?.log(convertedArgument)
             arguments.add(convertedArgument)
         }
 

@@ -14,7 +14,8 @@ import io.gitlab.arturbosch.kutils.toHashMap
  * @author Artur Bosch
  */
 open class DefaultResolver(
-    private val parameterResolvers: List<ParameterResolver>
+    private val parameterResolvers: List<ParameterResolver>,
+    private val debugging: Debugging? = null
 ) : Resolver {
 
     override val priority: Int = -1
@@ -44,7 +45,7 @@ open class DefaultResolver(
             parameterResolver.evaluate(methodTarget, input)
         }
 
-        Debugging.log { provider }
+        debugging?.log { provider }
         return CallTarget(provider, methodTarget, arguments)
     }
 
