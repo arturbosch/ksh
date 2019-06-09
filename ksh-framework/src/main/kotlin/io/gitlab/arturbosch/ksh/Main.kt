@@ -62,10 +62,13 @@ fun bootstrap(
     val loadedCommands = load<ShellClassesProvider>().flatMap { it.provide(container) }
     verify(loadedCommands)
 
-    val resolver = (load<ResolverProvider>()
-        .firstPrioritized()
-        ?.provide(container)
-        ?: throw IllegalStateException("No resolver found!"))
+    val resolvers = load<ResolverProvider>()
+        .map { it.provide(container) }
+        .sortedBy { it.priority }
+
+    if (resolvers.isEmpty()) {
+        throw IllegalStateException("No resolver found!")
+    }
 
     val context = load<ContextProvider>().firstPrioritized()?.provide(container)
         ?: object : ContextProvider {
@@ -75,12 +78,12 @@ fun bootstrap(
                 override var settings: ShellSettings = settings
                 override var reader: LineReader = reader
                 override var terminal: Terminal = term
-                override var resolver: Resolver = resolver
+                override var resolvers: List<Resolver> = resolvers
                 override fun commands(): List<ShellClass> = loadedCommands
             }
         }.provide(container)
 
-    container.withSingleton(resolver).init(loadedCommands)
+    resolvers.forEach { container.withSingleton(it).init(loadedCommands) }
     container.withSingleton(completer).init(loadedCommands)
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }

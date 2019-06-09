@@ -14,7 +14,7 @@ interface Context : WithPriority {
     val settings: ShellSettings
     val reader: LineReader
     val terminal: Terminal
-    val resolver: Resolver
+    val resolvers: List<Resolver>
 
     fun commands(): List<ShellClass>
 }

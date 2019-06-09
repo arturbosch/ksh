@@ -13,7 +13,11 @@ import java.lang.reflect.InvocationTargetException
 import java.nio.file.Path
 
 fun Context.writeln(msg: String?) = terminal.writeln(msg)
-fun Context.resolve(line: InputLine) = resolver.evaluate(line)
+fun Context.resolve(line: InputLine) = resolvers.asSequence()
+    .map { it.evaluate(line) }
+    .firstOrNull()
+    ?: throw ShellException("No resolver could resolve '$line'")
+
 fun Context.readLine(prompt: String? = settings.prompt()): String? = reader.readLine(prompt)
 fun Context.parsedLine(): ParsedLine = reader.parsedLine
     ?: throw IllegalStateException("Do not get a 'ParsedLine' before reading a line first.")
