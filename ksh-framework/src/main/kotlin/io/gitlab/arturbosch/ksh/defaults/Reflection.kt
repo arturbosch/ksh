@@ -15,8 +15,11 @@ fun Parameter.isUnnamedOption(): Boolean = shellOption?.value?.let { "" in it } 
 
 fun ShellClass.extractMethods() = javaClass
         .declaredMethods
+        .asSequence()
         .filter { it.isAnnotationPresent(ShellMethod::class.java) }
+        .filterNot { it.isSynthetic }
         .map { it.toShellMethod() }
+        .toList()
 
 fun ShellClass.isBuiltin(): Boolean = javaClass.getAnnotation(BuiltinCommand::class.java) != null
 
