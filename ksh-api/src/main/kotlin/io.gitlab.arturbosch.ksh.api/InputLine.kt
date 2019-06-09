@@ -1,9 +1,11 @@
 package io.gitlab.arturbosch.ksh.api
 
+import io.gitlab.arturbosch.kutils.StringRepresentation
+
 /**
  * @author Artur Bosch
  */
-interface InputLine {
+interface InputLine : StringRepresentation {
 
     var parameterStartIndex: Int
     fun firstWord(): String = if (words().isEmpty()) "" else words()[0]
