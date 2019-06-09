@@ -2,10 +2,13 @@ package io.gitlab.arturbosch.ksh.commands
 
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.Context
+import io.gitlab.arturbosch.ksh.api.InputLine
 import io.gitlab.arturbosch.ksh.api.MethodTarget
+import io.gitlab.arturbosch.ksh.api.Resolver
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
+import io.gitlab.arturbosch.ksh.api.SimpleInputLine
 import io.gitlab.arturbosch.ksh.defaults.extractMethods
 import io.gitlab.arturbosch.ksh.defaults.hasBoolType
 import io.gitlab.arturbosch.ksh.defaults.isBuiltin
@@ -21,28 +24,32 @@ import kotlin.properties.Delegates
 class Help : ShellClass {
 
     private var context: Context by Delegates.notNull()
+    private var resolvers: List<Resolver> by Delegates.notNull()
 
     override fun init(context: Context) {
         this.context = context
+        this.resolvers = context.resolvers
     }
 
     @ShellMethod(help = "Prints this help message.")
     fun main(
         @ShellOption(["", "--command"], defaultValue = "") command: String
     ): String = if (command.isNotBlank()) {
-        val parts = command.trim()
-                .split(" ")
-                .filter { it.isNotEmpty() }
-        val shellClass = commandByName(parts[0])
+        val input = SimpleInputLine(command)
+        val lookup: InputLine = resolvers.find { it.transforms(input) }
+            ?.transform(input)
+            ?: input
+
+        val shellClass = commandByName(lookup.firstWord())
         val methods = shellClass.extractMethods()
 
         fun forSubCommand(mainOnly: Boolean = false): String {
-            val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == parts[1] }
-                ?: throw IllegalArgumentException("No sub command with name '${parts[1]}' found.")
+            val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == lookup.secondWord() }
+                ?: throw IllegalArgumentException("No sub command with name '${lookup.secondWord()}' found.")
             return forSpecificCommand(shellClass, shellMethod)
         }
 
-        if (parts.size == 1) {
+        if (lookup.size() == 1 || lookup.secondWord().startsWith("-")) {
             if (methods.size == 1 && methods[0].isMain) {
                 forSubCommand(mainOnly = true)
             } else {
@@ -56,7 +63,7 @@ class Help : ShellClass {
     }
 
     private fun commandByName(command: String) = context.commands()
-            .find { it.commandId == command }
+        .find { it.commandId == command }
         ?: throw IllegalArgumentException("No command with name '$command' found.")
 
     private fun forSpecificCommand(command: ShellClass, methodTarget: MethodTarget): String {
@@ -64,29 +71,29 @@ class Help : ShellClass {
         val commandHelp = if (command.help.isNotEmpty()) " - ${command.help}" else ""
         val subCommandHelp = if (subCommand?.help?.isNotEmpty().isTrue()) " - ${subCommand?.help}" else ""
         val namePart = "NAME\n" +
-                "$EIGHT_SPACES${command.commandId}$commandHelp" +
-                "\n$EIGHT_SPACES$FOUR_SPACES${methodTarget.name}$subCommandHelp\n\n"
+            "$EIGHT_SPACES${command.commandId}$commandHelp" +
+            "\n$EIGHT_SPACES$FOUR_SPACES${methodTarget.name}$subCommandHelp\n\n"
         val synopsisPart = "SYNOPSIS\n" + EIGHT_SPACES + methodTarget.name +
-                methodTarget.parameters.joinToString(" ", prefix = " ") {
-                    val isBool = it.hasBoolType()
-                    val open = if (!isBool) "[" else ""
-                    val closed = if (!isBool) "]" else ""
-                    val value = if (!isBool) " [" + it.type.simpleName.toLowerCase() + "]" else ""
-                    val name = it.shellOption?.value?.sorted()?.last()
-                    "$open[$name]$value$closed"
-                } + NL
+            methodTarget.parameters.joinToString(" ", prefix = " ") {
+                val isBool = it.hasBoolType()
+                val open = if (!isBool) "[" else ""
+                val closed = if (!isBool) "]" else ""
+                val value = if (!isBool) " [" + it.type.simpleName.toLowerCase() + "]" else ""
+                val name = it.shellOption?.value?.sorted()?.last()
+                "$open[$name]$value$closed"
+            } + NL
 
         val optionsPart = if (methodTarget.parameters.isEmpty()) {
             ""
         } else {
             "\nOPTIONS\n" + methodTarget.parameters
-                    .joinToString("\n$EIGHT_SPACES", prefix = EIGHT_SPACES) { parameter ->
-                        val parameterPart = parameter.shellOption?.value
-                                ?.sorted()
-                                ?.reversed()
-                                ?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
-                        parameterPart + " [${parameter.type.simpleName.toLowerCase()}]"
-                    } + NL
+                .joinToString("\n$EIGHT_SPACES", prefix = EIGHT_SPACES) { parameter ->
+                    val parameterPart = parameter.shellOption?.value
+                        ?.sorted()
+                        ?.reversed()
+                        ?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
+                    parameterPart + " [${parameter.type.simpleName.toLowerCase()}]"
+                } + NL
         }
         return namePart + synopsisPart + optionsPart
     }
@@ -94,9 +101,9 @@ class Help : ShellClass {
     private fun forAllCommands(): String {
         val allCommands = context.commands()
         val otherCommands = allCommands.filter { !it.isBuiltin() }
-                .joinToString(NL) { FOUR_SPACES + it.toHelp() }
+            .joinToString(NL) { FOUR_SPACES + it.toHelp() }
         val builtinCommands = allCommands.filter { it.isBuiltin() }
-                .joinToString(NL) { FOUR_SPACES + it.toHelp() }
+            .joinToString(NL) { FOUR_SPACES + it.toHelp() }
 
         var result = ""
         if (otherCommands.isNotBlank()) {
@@ -127,7 +134,7 @@ class Help : ShellClass {
     private val MethodTarget.help get() = method.shellMethod().help
 
     private fun MethodTarget.toHelp() =
-            "${if (values.isEmpty()) name else values.joinToString(", ") { it }}: $help"
+        "${if (values.isEmpty()) name else values.joinToString(", ") { it }}: $help"
 }
 
 private const val NL = "\n"
