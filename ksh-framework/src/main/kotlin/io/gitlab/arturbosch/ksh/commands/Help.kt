@@ -9,12 +9,14 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.api.SimpleInputLine
+import io.gitlab.arturbosch.ksh.api.provider.AdditionalHelpProvider
 import io.gitlab.arturbosch.ksh.defaults.extractMethods
 import io.gitlab.arturbosch.ksh.defaults.hasBoolType
 import io.gitlab.arturbosch.ksh.defaults.isBuiltin
 import io.gitlab.arturbosch.ksh.defaults.shellMethod
 import io.gitlab.arturbosch.ksh.defaults.shellOption
 import io.gitlab.arturbosch.kutils.isTrue
+import io.gitlab.arturbosch.kutils.load
 import kotlin.properties.Delegates
 
 /**
@@ -25,6 +27,8 @@ class Help : ShellClass {
 
     private var context: Context by Delegates.notNull()
     private var resolvers: List<Resolver> by Delegates.notNull()
+
+    private val helpers by lazy { load<AdditionalHelpProvider>().toList() }
 
     override fun init(context: Context) {
         this.context = context
@@ -106,6 +110,10 @@ class Help : ShellClass {
             .joinToString(NL) { FOUR_SPACES + it.toHelp() }
 
         var result = ""
+
+        if (helpers.isNotEmpty()) {
+            result += helpers.joinToString(NL) { it.provide(context.container) } + NL
+        }
         if (otherCommands.isNotBlank()) {
             result += "Available commands:\n\n$otherCommands\n"
         }
