@@ -13,10 +13,18 @@ import java.lang.reflect.InvocationTargetException
 import java.nio.file.Path
 
 fun Context.writeln(msg: String?) = terminal.writeln(msg)
-fun Context.resolve(line: InputLine) = resolvers.asSequence()
-    .map { it.evaluate(line) }
-    .firstOrNull()
-    ?: throw ShellException("No resolver could resolve '$line'")
+fun Context.resolve(line: InputLine): CallTarget {
+    var current = line
+    for (resolver in resolvers) {
+        if (resolver.transforms(current)) {
+            current = resolver.transform(current)
+        }
+        if (resolver.supports(current)) {
+            return resolver.evaluate(current)
+        }
+    }
+    throw ShellException("No resolver could resolve '$line'")
+}
 
 fun Context.readLine(prompt: String? = settings.prompt()): String? = reader.readLine(prompt)
 fun Context.parsedLine(): ParsedLine = reader.parsedLine

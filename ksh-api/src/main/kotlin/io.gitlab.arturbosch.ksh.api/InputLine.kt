@@ -1,7 +1,5 @@
 package io.gitlab.arturbosch.ksh.api
 
-import io.gitlab.arturbosch.kutils.simpleClassName
-
 /**
  * @author Artur Bosch
  */
@@ -29,7 +27,5 @@ class SimpleInputLine(line: String) : InputLine {
         parameterStartIndex = index + 1
     }
 
-    override fun toString(): String {
-        return "${simpleClassName<SimpleInputLine>()}(${words.joinToString(" ")})"
-    }
+    override fun toString(): String = "Line(${words.joinToString(" ")})"
 }

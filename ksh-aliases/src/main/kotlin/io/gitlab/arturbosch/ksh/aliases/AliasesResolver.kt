@@ -14,7 +14,7 @@ class AliasesResolver(
     override val priority: Int = 100 // try to be called first
 
     override fun init(commands: List<ShellClass>) = Unit
-    override fun supports(input: InputLine): Boolean = true
+    override fun supports(input: InputLine): Boolean = false
     override fun transforms(input: InputLine): Boolean = input.containsAlias()
 
     override fun transform(input: InputLine): InputLine {

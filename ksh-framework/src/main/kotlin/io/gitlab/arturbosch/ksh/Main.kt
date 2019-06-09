@@ -65,6 +65,7 @@ fun bootstrap(
     val resolvers = load<ResolverProvider>()
         .map { it.provide(container) }
         .sortedBy { it.priority }
+        .reversed()
 
     if (resolvers.isEmpty()) {
         throw IllegalStateException("No resolver found!")
