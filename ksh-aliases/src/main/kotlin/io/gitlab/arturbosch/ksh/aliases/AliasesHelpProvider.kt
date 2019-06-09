@@ -1,11 +1,11 @@
 package io.gitlab.arturbosch.ksh.aliases
 
 import io.gitlab.arturbosch.ksh.api.provider.AdditionalHelpProvider
-import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.Container
 
 class AliasesHelpProvider : AdditionalHelpProvider {
 
-    override fun provide(container: Injektor): String {
+    override fun provide(container: Container): String {
         val aliases = aliases(container)
         return if (aliases.isEmpty()) {
             ""

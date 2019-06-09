@@ -9,11 +9,11 @@ import io.gitlab.arturbosch.ksh.defaults.FloatConverter
 import io.gitlab.arturbosch.ksh.defaults.IntConverter
 import io.gitlab.arturbosch.ksh.defaults.PathConverter
 import io.gitlab.arturbosch.ksh.defaults.StringConverter
-import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.Container
 
 class DefaultConvertersProvider : ConvertersProvider, WithLowPriority {
 
-    override fun provide(container: Injektor): List<Converter<*>> =
+    override fun provide(container: Container): List<Converter<*>> =
         listOf(
             StringConverter(),
             IntConverter(),

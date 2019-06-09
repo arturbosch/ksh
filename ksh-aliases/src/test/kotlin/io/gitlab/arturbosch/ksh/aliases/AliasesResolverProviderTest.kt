@@ -4,7 +4,7 @@ import assertk.assert
 import assertk.assertions.isEqualTo
 import io.gitlab.arturbosch.ksh.NoopContainer
 import io.gitlab.arturbosch.ksh.api.SimpleInputLine
-import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.Container
 import org.junit.Test
 
 class AliasesResolverProviderTest {
@@ -20,7 +20,7 @@ class AliasesResolverProviderTest {
 class TestAliasesProvider : AliasesProvider {
 
     override val priority: Int = 100
-    override fun provide(container: Injektor): Map<String, String> {
+    override fun provide(container: Container): Map<String, String> {
         return hashMapOf("hello" to "help hello")
     }
 }

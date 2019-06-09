@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh.api
 
-import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.Container
 import io.gitlab.arturbosch.kutils.WithPriority
 import org.jline.reader.LineReader
 import org.jline.terminal.Terminal
@@ -10,7 +10,7 @@ import org.jline.terminal.Terminal
  */
 interface Context : WithPriority {
 
-    val container: Injektor
+    val container: Container
     val settings: ShellSettings
     val reader: LineReader
     val terminal: Terminal

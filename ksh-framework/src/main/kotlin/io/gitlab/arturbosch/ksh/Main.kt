@@ -12,8 +12,8 @@ import io.gitlab.arturbosch.ksh.api.provider.ShellBuilderProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellClassesProvider
 import io.gitlab.arturbosch.ksh.api.provider.ShellSettingsProvider
 import io.gitlab.arturbosch.ksh.defaults.DefaultShell
-import io.gitlab.arturbosch.kutils.DefaultInjektor
-import io.gitlab.arturbosch.kutils.Injektor
+import io.gitlab.arturbosch.kutils.DefaultContainer
+import io.gitlab.arturbosch.kutils.Container
 import io.gitlab.arturbosch.kutils.TypeReference
 import io.gitlab.arturbosch.kutils.addSingleton
 import io.gitlab.arturbosch.kutils.firstPrioritized
@@ -26,12 +26,12 @@ import java.lang.reflect.Type
 fun main() = bootstrap()
 
 fun bootstrap() {
-    val bootstrap = bootstrap(DefaultInjektor())
+    val bootstrap = bootstrap(DefaultContainer())
     bootstrap.runLooping()
 }
 
 fun bootstrap(
-    container: Injektor = DefaultInjektor(),
+    container: Container = DefaultContainer(),
     builder: ShellBuilder =
         load<ShellBuilderProvider>()
             .firstPrioritized()
@@ -73,9 +73,9 @@ fun bootstrap(
 
     val context = load<ContextProvider>().firstPrioritized()?.provide(container)
         ?: object : ContextProvider {
-            override fun provide(container: Injektor): Context = object : Context {
+            override fun provide(container: Container): Context = object : Context {
                 override val priority: Int = Int.MIN_VALUE
-                override var container: Injektor = container
+                override var container: Container = container
                 override var settings: ShellSettings = settings
                 override var reader: LineReader = reader
                 override var terminal: Terminal = term
@@ -91,7 +91,7 @@ fun bootstrap(
     return Bootstrap(context)
 }
 
-class NoopContainer : Injektor {
+class NoopContainer : Container {
 
     override fun <T : Any> addFactory(typeReference: TypeReference<T>, factory: () -> T) = Unit
     override fun <T : Any> addSingletonFactory(typeReference: TypeReference<T>, factory: () -> T) = Unit
