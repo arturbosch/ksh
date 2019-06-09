@@ -1,4 +1,5 @@
 rootProject.name = 'ksh'
+include 'ksh-aliases'
 include 'ksh-api'
 include 'ksh-framework'
 include 'ksh-template'

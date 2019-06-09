@@ -1,5 +1,7 @@
 package io.gitlab.arturbosch.ksh.api
 
+import io.gitlab.arturbosch.kutils.simpleClassName
+
 /**
  * @author Artur Bosch
  */
@@ -11,4 +13,23 @@ interface InputLine {
     fun words(): List<String>
     fun markParametersStartAfter(word: String)
     fun size(): Int = words().size
+}
+
+class SimpleInputLine(line: String) : InputLine {
+
+    private val words = line.split(" ")
+
+    override var parameterStartIndex: Int = 0
+    override fun words(): List<String> = words
+
+    override fun markParametersStartAfter(word: String) {
+        val (index, _) = words().withIndex()
+            .find { (_, value) -> value == word }
+            ?: throw IllegalArgumentException("word must be inside input line")
+        parameterStartIndex = index + 1
+    }
+
+    override fun toString(): String {
+        return "${simpleClassName<SimpleInputLine>()}(${words.joinToString(" ")})"
+    }
 }

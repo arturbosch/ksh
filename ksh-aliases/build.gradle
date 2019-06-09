@@ -1,0 +1,6 @@
+dependencies {
+    implementation project(":ksh-api")
+    compileOnly "io.gitlab.arturbosch:kutils:$kutilsVersion"
+    testImplementation project(":ksh-test")
+    testImplementation "io.gitlab.arturbosch:kutils:$kutilsVersion"
+}
