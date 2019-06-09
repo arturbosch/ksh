@@ -39,7 +39,7 @@ class Bootstrap(val context: Context) {
             exitProcess(e.exitCode)
         } catch (e: RuntimeException) {
             context.writeln(e.message)
-            LastExceptionState.error = e
+            context.lastExceptionState = e
         }
         return false
     }

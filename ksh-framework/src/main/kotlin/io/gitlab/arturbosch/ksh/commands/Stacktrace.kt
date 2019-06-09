@@ -1,12 +1,10 @@
 package io.gitlab.arturbosch.ksh.commands
 
-import io.gitlab.arturbosch.ksh.LastExceptionState
 import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.writeln
-import org.jline.terminal.Terminal
 import kotlin.properties.Delegates
 
 /**
@@ -15,14 +13,14 @@ import kotlin.properties.Delegates
 @BuiltinCommand
 class Stacktrace : ShellClass {
 
-    private var terminal: Terminal by Delegates.notNull()
+    private var context: Context by Delegates.notNull()
 
     override fun init(context: Context) {
-        terminal = context.terminal
+        this.context = context
     }
 
     @ShellMethod(help = "Prints the last error.")
     fun main() {
-        terminal.writeln(LastExceptionState.error)
+        context.terminal.writeln(context.lastExceptionState)
     }
 }

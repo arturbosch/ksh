@@ -15,6 +15,7 @@ interface Context : WithPriority {
     val reader: LineReader
     val terminal: Terminal
     val resolvers: List<Resolver>
+    var lastExceptionState: Throwable?
 
     fun commands(): List<ShellClass>
 }

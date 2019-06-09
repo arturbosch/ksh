@@ -81,6 +81,7 @@ fun bootstrap(
                 override var reader: LineReader = reader
                 override var terminal: Terminal = term
                 override var resolvers: List<Resolver> = resolvers
+                override var lastExceptionState: Throwable? = null
                 override fun commands(): List<ShellClass> = loadedCommands
             }
         }.provide(container)
