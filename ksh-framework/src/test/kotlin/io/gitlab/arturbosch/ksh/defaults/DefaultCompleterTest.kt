@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import assertk.assertThat
 import assertk.assertions.containsAll
 import io.gitlab.arturbosch.ksh.Conversions
 import io.gitlab.arturbosch.ksh.Hello
@@ -34,48 +35,48 @@ class DefaultCompleterTest {
     @Test
     fun `completion of all shell classes if nothing is entered`() {
         val candidates = completer.complete("")
-        assertk.assert(candidates).containsAll("hello", "conversions")
+        assertThat(candidates).containsAll("hello", "conversions")
     }
 
     @Test
     fun `completion of hello command when only word is hel`() {
         val candidates = completer.complete("hel")
-        assertk.assert(candidates).containsAll("hello")
+        assertThat(candidates).containsAll("hello")
     }
 
     @Test
     fun `completion of sub commands of hello are shown`() {
         val candidates = completer.complete("hello  ")
-        assertk.assert(candidates).containsAll("say", "count", "invalid")
+        assertThat(candidates).containsAll("say", "count", "invalid")
     }
 
     @Test
     fun `completion of main command's (hello) only option is shown as second word indicates an option`() {
         val candidates = completer.complete("hello --")
-        assertk.assert(candidates).containsAll("--name", "-n")
+        assertThat(candidates).containsAll("--name", "-n")
     }
 
     @Test
     fun `completion of sub commands options when third word is empty`() {
         val candidates = completer.complete("hello count  ")
-        assertk.assert(candidates).containsAll("--name", "-n", "--times")
+        assertThat(candidates).containsAll("--name", "-n", "--times")
     }
 
     @Test
     fun `completion of sub commands options when third word indicates an option`() {
         val candidates = completer.complete("hello count -")
-        assertk.assert(candidates).containsAll("--name", "-n", "--times")
+        assertThat(candidates).containsAll("--name", "-n", "--times")
     }
 
     @Test
     fun `completion of sub commands options when third word indicates a long option`() {
         val candidates = completer.complete("hello count --")
-        assertk.assert(candidates).containsAll("--name", "--times")
+        assertThat(candidates).containsAll("--name", "--times")
     }
 
     @Test
     fun `completion of sub commands option 'times'`() {
         val candidates = completer.complete("hello count --tim")
-        assertk.assert(candidates).containsAll("--times")
+        assertThat(candidates).containsAll("--times")
     }
 }

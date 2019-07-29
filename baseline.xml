@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <Blacklist></Blacklist>
+  <Whitelist>
+    <ID>ComplexMethod:DefaultParameterResolver.kt$DefaultParameterResolver$override fun evaluate(methodTarget: MethodTarget, input: InputLine): List&lt;Any?&gt;</ID>
+    <ID>ComplexMethod:Help.kt$Help$@ShellMethod(help = "Prints this help message.") fun main( @ShellOption(["", "--command"], defaultValue = "") command: String ): String</ID>
+    <ID>ComplexMethod:Help.kt$Help$private fun forSpecificCommand(command: ShellClass, methodTarget: MethodTarget): String</ID>
+    <ID>EmptyFunctionBlock:ShellClass.kt$ShellClass${}</ID>
+    <ID>LongMethod:DefaultParameterResolver.kt$DefaultParameterResolver$override fun evaluate(methodTarget: MethodTarget, input: InputLine): List&lt;Any?&gt;</ID>
+    <ID>LongParameterList:TestCommands.kt$Conversions$( @ShellOption(["-i"]) aInt: Int, @ShellOption(["-f"]) aFloat: Float, @ShellOption(["-b"]) aBool: Boolean, @ShellOption(["-d"]) aDouble: Double, @ShellOption(["-s"]) aString: String, @ShellOption(["-file"]) aFile: File )</ID>
+    <ID>MagicNumber:AliasesResolver.kt$AliasesResolver$100</ID>
+    <ID>MatchingDeclarationName:Main.kt$io.gitlab.arturbosch.ksh.Main.kt</ID>
+    <ID>MatchingDeclarationName:TestContext.kt$io.gitlab.arturbosch.ksh.test.TestContext.kt</ID>
+    <ID>MaxLineLength:ContextExtensions.kt$container.get&lt;Debugging&gt;() .log { "Invoking '${target.methodTarget.name}' on '${target.shellClass.javaClass.simpleName}' with args='${target.arguments}'" }</ID>
+    <ID>MaximumLineLength:</ID>
+    <ID>NoUnusedImports:</ID>
+    <ID>SpreadOperator:DefaultMethodTarget.kt$DefaultMethodTarget$(command, *arguments.toTypedArray())</ID>
+    <ID>SpreadOperator:MethodTarget.kt$MethodTarget$(command, *arguments.toTypedArray())</ID>
+    <ID>TooGenericExceptionCaught:Bootstrap.kt$Bootstrap$e: RuntimeException</ID>
+    <ID>TooManyFunctions:Reflection.kt$io.gitlab.arturbosch.ksh.defaults.Reflection.kt</ID>
+  </Whitelist>
+</SmellBaseline>

@@ -1,6 +1,6 @@
 package io.gitlab.arturbosch.ksh.aliases
 
-import assertk.assert
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.gitlab.arturbosch.ksh.NoopContainer
 import io.gitlab.arturbosch.ksh.api.SimpleInputLine
@@ -13,7 +13,7 @@ class AliasesResolverProviderTest {
     fun `resolves aliases`() {
         val resolver = AliasesResolverProvider().provide(NoopContainer())
         val transformed = resolver.transform(SimpleInputLine("hello"))
-        assert(transformed.words()).isEqualTo(listOf("help", "hello"))
+        assertThat(transformed.words()).isEqualTo(listOf("help", "hello"))
     }
 }
 

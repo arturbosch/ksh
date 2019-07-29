@@ -1,4 +1,7 @@
 # ksh
+
+[![build status](https://travis-ci.org/arturbosch/ksh.svg?branch=master)](https://travis-ci.org/arturbosch/ksh)
+[![CodeFactor](https://www.codefactor.io/repository/github/arturbosch/ksh/badge)](https://www.codefactor.io/repository/github/arturbosch/ksh)
 [ ![Download](https://api.bintray.com/packages/arturbosch/generic/ksh/images/download.svg) ](https://bintray.com/arturbosch/generic/ksh/_latestVersion)
 
 A framework to build shell-like applications

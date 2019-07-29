@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.commands
 
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.gitlab.arturbosch.ksh.test.TestShellBuilder
 import io.gitlab.arturbosch.ksh.test.get
@@ -30,6 +31,6 @@ internal class ScriptTest {
 
 		""".trimIndent()
 
-        assertk.assert(actual).isEqualTo(expected)
+        assertThat(actual).isEqualTo(expected)
     }
 }

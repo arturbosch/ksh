@@ -1,5 +1,6 @@
 package io.gitlab.arturbosch.ksh.defaults
 
+import assertk.assertThat
 import assertk.assertions.isEqualTo
 import io.gitlab.arturbosch.ksh.Gradle
 import io.gitlab.arturbosch.ksh.test.testResolver
@@ -15,6 +16,6 @@ class FixedResolverBugsTest {
     @Test
     fun `should skip non flag words after arity is resolved`() {
         val target = resolver.evaluate("gradle module testy -wd /bla/bla -g a.b.c")
-        assertk.assert(target).isEqualTo("")
+        assertThat(target).isEqualTo("")
     }
 }

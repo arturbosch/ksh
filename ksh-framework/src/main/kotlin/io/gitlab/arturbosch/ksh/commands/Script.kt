@@ -6,8 +6,8 @@ import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
 import io.gitlab.arturbosch.ksh.api.ShellOption
 import io.gitlab.arturbosch.ksh.interpret
+import io.gitlab.arturbosch.kutils.Path
 import io.gitlab.arturbosch.kutils.consume
-import io.gitlab.arturbosch.kutils.path
 import io.gitlab.arturbosch.kutils.process
 import java.io.IOException
 import kotlin.properties.Delegates
@@ -34,7 +34,7 @@ class Script : ShellClass {
     ): String = try {
         val (out, err, status) =
             process(
-                command.split(" "), path(workDir ?: ".").toFile()
+                command.split(" "), Path(workDir ?: ".").toFile()
             ).consume()
         (if (status == 0) out else err).joinToString(sep)
     } catch (ioe: IOException) {
@@ -45,7 +45,7 @@ class Script : ShellClass {
     fun file(
         @ShellOption(["", "--script"], help = "Path to a ksh script") scriptName: String
     ) = try {
-        context.interpret(path(scriptName))
+        context.interpret(Path(scriptName))
     } catch (ioe: IOException) {
         throw IllegalArgumentException("Error executing script 'command'.", ioe)
     }

@@ -1,6 +1,7 @@
 package io.gitlab.arturbosch.ksh.converters
 
-import assertk.assertions.each
+import assertk.assertThat
+import assertk.assertions.isInstanceOf
 import io.gitlab.arturbosch.ksh.NoopContainer
 import io.gitlab.arturbosch.ksh.defaults.DefaultConversions
 import io.gitlab.arturbosch.ksh.defaults.providers.DefaultConvertersProvider
@@ -21,12 +22,13 @@ class ConverterTest {
     fun defaultConvertersWork() {
         val conversions = DefaultConversions(DefaultConvertersProvider().provide(NoopContainer()))
 
-        assertk.assert {
-            ConverterTest::class.java.getDeclaredMethod("parameters", Path::class.java, File::class.java)
-                .parameters
-                .map { it to associateBy(it) }
-                .map { conversions.convert(it.first, it.second) }
-        }.returnedValue { each { checkNotNull(it.actual)::class in setOf(Path::class, File::class) } }
+        val (first, second) = ConverterTest::class.java.getDeclaredMethod("parameters", Path::class.java, File::class.java)
+            .parameters
+            .map { it to associateBy(it) }
+            .map { conversions.convert(it.first, it.second) }
+
+        assertThat(first!!).isInstanceOf(Path::class)
+        assertThat(second!!).isInstanceOf(File::class)
     }
 
     private fun associateBy(it: Parameter): String {
