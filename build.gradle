@@ -43,6 +43,7 @@ subprojects {
     repositories {
         mavenCentral()
         mavenLocal()
+        maven { url "http://dl.bintray.com/arturbosch/generic" }
     }
 
     dependencies {
