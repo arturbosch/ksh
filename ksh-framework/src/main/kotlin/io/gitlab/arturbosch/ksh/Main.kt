@@ -20,6 +20,7 @@ import io.gitlab.arturbosch.kutils.firstPrioritized
 import io.gitlab.arturbosch.kutils.load
 import io.gitlab.arturbosch.kutils.withSingleton
 import org.jline.reader.LineReader
+import org.jline.reader.impl.completer.AggregateCompleter
 import org.jline.terminal.Terminal
 import java.lang.reflect.Type
 
@@ -44,10 +45,9 @@ fun bootstrap(
         ?: error("no ShellSettings provided")
     container.addSingleton(settings)
 
-    val completer = load<CompleterProvider>()
-        .firstPrioritized()
-        ?.provide(container)
-        ?: error("no Completer provided")
+    val completers = load<CompleterProvider>().map { it.provide(container) }
+    check(completers.isNotEmpty()) { "no Completer provided" }
+    val completer = if (completers.size > 1) AggregateCompleter(completers) else completers[0]
 
     val (term, reader) =
         builder.createShell(settings) {
@@ -87,7 +87,8 @@ fun bootstrap(
         }.provide(container)
 
     resolvers.forEach { container.withSingleton(it).init(loadedCommands) }
-    container.withSingleton(completer).init(loadedCommands)
+    completers.forEach { it.init(loadedCommands) }
+    container.withSingleton(completer)
     container.addSingleton(context)
     loadedCommands.forEach { it.init(context) }
     return Bootstrap(context)

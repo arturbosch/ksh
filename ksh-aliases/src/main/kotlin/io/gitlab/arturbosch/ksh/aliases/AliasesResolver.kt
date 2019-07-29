@@ -18,7 +18,7 @@ class AliasesResolver(
     override fun transforms(input: InputLine): Boolean = input.containsAlias()
 
     override fun transform(input: InputLine): InputLine {
-        val lookup = input.words().joinToString(" ")
+        val lookup = input.words().joinToString(" ").trim()
         val transformed = aliasMapping[lookup] ?: throw ShellException("No alias found for '$input'")
         return SimpleInputLine(transformed)
     }
