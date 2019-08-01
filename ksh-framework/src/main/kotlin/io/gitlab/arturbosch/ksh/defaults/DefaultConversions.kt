@@ -20,12 +20,12 @@ class DefaultConversions(converts: List<Converter<*>>) {
 
     fun convert(parameter: Parameter, argument: String): Any? {
         if (argument == ShellOption.NULL_DEFAULT) {
-            return null
+            return if (parameter.hasBoolType()) false else null
         }
         val converter = converters[parameter.type.kotlin]
         if (converter != null) {
             return converter.parse(argument)
         }
-        throw IllegalArgumentException("Could not convert '$argument' to '${parameter.type}'.")
+        throw IllegalArgumentException("No converter found for type '${parameter.type}' and argument '$argument'.")
     }
 }
