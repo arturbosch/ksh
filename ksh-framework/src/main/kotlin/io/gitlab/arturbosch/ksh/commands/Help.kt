@@ -17,6 +17,7 @@ import io.gitlab.arturbosch.ksh.defaults.shellMethod
 import io.gitlab.arturbosch.ksh.defaults.shellOption
 import io.gitlab.arturbosch.kutils.isTrue
 import io.gitlab.arturbosch.kutils.load
+import java.lang.reflect.Parameter
 import kotlin.properties.Delegates
 
 /**
@@ -38,33 +39,34 @@ class Help : ShellClass {
     @ShellMethod(help = "Prints this help message.")
     fun main(
         @ShellOption(["", "--command"], defaultValue = "") command: String
-    ): String = if (command.isNotBlank()) {
-        val input = SimpleInputLine(command)
-        val lookup: InputLine = resolvers.find { it.transforms(input) }
-            ?.transform(input)
-            ?: input
+    ): String =
+        if (command.isNotBlank()) {
+            val input = SimpleInputLine(command)
+            val lookup: InputLine = resolvers.find { it.transforms(input) }
+                ?.transform(input)
+                ?: input
 
-        val shellClass = commandByName(lookup.firstWord())
-        val methods = shellClass.extractMethods()
+            val shellClass = commandByName(lookup.firstWord())
+            val methods = shellClass.extractMethods()
 
-        fun forSubCommand(mainOnly: Boolean = false): String {
-            val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == lookup.secondWord() }
-                ?: throw IllegalArgumentException("No sub command with name '${lookup.secondWord()}' found.")
-            return forSpecificCommand(shellClass, shellMethod)
-        }
+            fun forSubCommand(mainOnly: Boolean = false): String {
+                val shellMethod = if (mainOnly) methods[0] else methods.find { it.name == lookup.secondWord() }
+                    ?: throw IllegalArgumentException("No sub command with name '${lookup.secondWord()}' found.")
+                return forSpecificCommand(shellClass, shellMethod)
+            }
 
-        if (lookup.size() == 1 || lookup.secondWord().startsWith("-")) {
-            if (methods.size == 1 && methods[0].isMain) {
-                forSubCommand(mainOnly = true)
+            if (lookup.size() == 1 || lookup.secondWord().startsWith("-")) {
+                if (methods.size == 1 && methods[0].isMain) {
+                    forSubCommand(mainOnly = true)
+                } else {
+                    shellClass.toHelp() + NL
+                }
             } else {
-                shellClass.toHelp() + NL
+                forSubCommand()
             }
         } else {
-            forSubCommand()
+            forAllCommands()
         }
-    } else {
-        forAllCommands()
-    }
 
     private fun commandByName(command: String) = context.commands()
         .find { it.commandId == command }
@@ -91,15 +93,25 @@ class Help : ShellClass {
             ""
         } else {
             "\nOPTIONS\n" + methodTarget.parameters
-                .joinToString("\n$EIGHT_SPACES", prefix = EIGHT_SPACES) { parameter ->
-                    val parameterPart = parameter.shellOption?.value
-                        ?.sorted()
-                        ?.reversed()
-                        ?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
-                    parameterPart + " [${parameter.type.simpleName.toLowerCase()}]"
-                } + NL
+                .joinToString(
+                    "\n$EIGHT_SPACES",
+                    prefix = EIGHT_SPACES,
+                    transform = this::parameterToHelp
+                ) + NL
         }
         return namePart + synopsisPart + optionsPart
+    }
+
+    private fun parameterToHelp(parameter: Parameter): String {
+        val parameterPart = parameter.shellOption?.value
+            ?.sorted()
+            ?.reversed()
+            ?.joinToString(" or ") { if (it.isEmpty()) "[default]" else it } ?: ""
+        val optionHelp = parameter.shellOption
+            ?.help
+            ?.takeIf { it.isNotEmpty() }
+            ?.let { " - $it" } ?: ""
+        return parameterPart + " [${parameter.type.simpleName.toLowerCase()}]" + optionHelp
     }
 
     private fun forAllCommands(): String {
