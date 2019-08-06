@@ -10,10 +10,15 @@ class AliasesHelpProvider : AdditionalHelpProvider {
         return if (aliases.isEmpty()) {
             ""
         } else {
-            "Available aliases:\n\n${aliases.entries.joinToString("\n", transform = this::renderAliases)}\n"
+            "Available aliases:\n\n${renderAliases(aliases)}\n"
         }
     }
 
-    private fun renderAliases(entry: Map.Entry<String, String>): String =
+    private fun renderAliases(aliases: Map<String, String>) =
+        aliases.entries
+            .sortedBy { it.key }
+            .joinToString("\n", transform = this::renderAliasEntry)
+
+    private fun renderAliasEntry(entry: Map.Entry<String, String>): String =
         "    * ${entry.key} -> ${entry.value}"
 }

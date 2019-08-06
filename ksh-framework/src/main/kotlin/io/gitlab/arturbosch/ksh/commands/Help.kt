@@ -83,7 +83,7 @@ class Help : ShellClass {
                 val open = if (!isBool) "[" else ""
                 val closed = if (!isBool) "]" else ""
                 val value = if (!isBool) " [" + it.type.simpleName.toLowerCase() + "]" else ""
-                val name = it.shellOption?.value?.sorted()?.last()
+                val name = it.shellOption?.value?.max()
                 "$open[$name]$value$closed"
             } + NL
 
@@ -105,8 +105,10 @@ class Help : ShellClass {
     private fun forAllCommands(): String {
         val allCommands = context.commands()
         val otherCommands = allCommands.filter { !it.isBuiltin() }
+            .sortedBy { it.commandId }
             .joinToString(NL) { FOUR_SPACES + it.toHelp() }
         val builtinCommands = allCommands.filter { it.isBuiltin() }
+            .sortedBy { it.commandId }
             .joinToString(NL) { FOUR_SPACES + it.toHelp() }
 
         var result = ""
@@ -134,7 +136,7 @@ class Help : ShellClass {
         val helpMessage = main?.help ?: help
         var command = "$starIndicator$commandId${if (helpMessage.isBlank()) "" else ": $helpMessage"}"
         if (remaining.isNotEmpty()) {
-            command += NL + remaining.joinToString(NL) { EIGHT_SPACES + it.toHelp() }
+            command += NL + remaining.sortedBy { it.name }.joinToString(NL) { EIGHT_SPACES + it.toHelp() }
         }
         return command
     }
