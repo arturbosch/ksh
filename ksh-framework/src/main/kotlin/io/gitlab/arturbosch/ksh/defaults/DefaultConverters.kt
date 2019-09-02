@@ -16,6 +16,16 @@ class IntConverter : Converter<Int> {
     override fun parse(input: String): Int = input.toInt()
 }
 
+class LongConverter : Converter<Long> {
+    override val id: KClass<Long> = Long::class
+    override fun parse(input: String): Long = input.toLong()
+}
+
+class CharConverter : Converter<Char> {
+    override val id: KClass<Char> = Char::class
+    override fun parse(input: String): Char = input[0]
+}
+
 class BoolConverter : Converter<Boolean> {
     override val id: KClass<Boolean> = Boolean::class
     override fun parse(input: String): Boolean = input.toBoolean()
