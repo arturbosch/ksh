@@ -8,8 +8,12 @@ import io.gitlab.arturbosch.kutils.StringRepresentation
 interface InputLine : StringRepresentation {
 
     var parameterStartIndex: Int
+    @JvmDefault
     fun firstWord(): String = if (words().isEmpty()) "" else words()[0]
+
+    @JvmDefault
     fun secondWord(): String = if (words().size < 2) "" else words()[1]
+
     fun words(): List<String>
     fun markParametersStartAfter(word: String)
     fun size(): Int = words().size

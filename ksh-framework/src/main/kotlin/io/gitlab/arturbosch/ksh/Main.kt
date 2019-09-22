@@ -31,6 +31,7 @@ fun bootstrap() {
     bootstrap.runLooping()
 }
 
+@JvmOverloads
 fun bootstrap(
     container: Container = DefaultContainer(),
     builder: ShellBuilder =

@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+    id 'application'
+    id 'com.github.johnrengelman.shadow'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile project(":ksh-framework")
+    compile project(":ksh-aliases")
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    testImplementation project(":ksh-test")
+    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+}
+
+mainClassName = 'io.gitlab.arturbosch.ksh.java.Main'
+
+shadowJar {
+    mergeServiceFiles()
+}

@@ -57,10 +57,12 @@ subprojects {
 
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.freeCompilerArgs = ["-Xjvm-default=enable"]
     }
 
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+        kotlinOptions.freeCompilerArgs = ["-Xjvm-default=enable"]
     }
 
     bintray {

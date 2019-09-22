@@ -7,7 +7,9 @@ import io.gitlab.arturbosch.kutils.WithPriority
  */
 interface ShellSettings : WithPriority {
 
-    val debug: Boolean get() = false
+    @JvmDefault
+    val debug: Boolean
+        get() = false
     val applicationName: String
     val historyFile: String
     fun prompt(): String
