@@ -13,6 +13,7 @@ class BuiltinProvider : ShellClassesProvider {
             Help(),
             Script(),
             Stacktrace(),
-            System()
+            System(),
+            Runtime()
         )
 }

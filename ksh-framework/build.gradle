@@ -7,5 +7,18 @@ dependencies {
     compile project(":ksh-api")
     compile "org.jline:jline:$jlineVersion"
     compile "io.gitlab.arturbosch:kutils:$kutilsVersion"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     testCompile project(":ksh-test")
 }
+
+ext.generatedResources = file("$buildDir/generated-resources")
+
+task generateInfo {
+    ext.outputFile = file("$generatedResources/runtime.properties")
+    outputs.file(outputFile)
+    doLast {
+        outputFile.text = "version=${project.version}"
+    }
+}
+
+sourceSets.main.output.dir generatedResources, builtBy: generateInfo
