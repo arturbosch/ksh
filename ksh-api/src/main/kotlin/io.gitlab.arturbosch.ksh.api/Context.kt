@@ -18,4 +18,13 @@ interface Context : WithPriority {
     var lastExceptionState: Throwable?
 
     fun commands(): List<ShellClass>
+
+    @JvmDefault
+    fun writeln(msg: String?) = terminal.writer().write(msg + "\n")
+
+    @JvmDefault
+    fun writeln(error: Throwable?) = error?.printStackTrace(terminal.writer())
+
+    @JvmDefault
+    fun readLine(prompt: String? = settings.prompt()): String? = reader.readLine(prompt)
 }

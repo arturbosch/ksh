@@ -69,9 +69,7 @@ fun bootstrap(
         .sortedBy { it.priority }
         .reversed()
 
-    if (resolvers.isEmpty()) {
-        throw IllegalStateException("No resolver found!")
-    }
+    check(resolvers.isNotEmpty()) { "No resolver found!" }
 
     val context = load<ContextProvider>().firstPrioritized()?.provide(container)
         ?: object : ContextProvider {

@@ -12,13 +12,15 @@ class Debugging(
 
     fun log(msg: () -> Any?) {
         if (isDebug) {
-            terminal.writeln(msg()?.toString())
+            writeln(msg())
         }
     }
 
     fun log(msg: Any?) {
         if (isDebug) {
-            terminal.writeln(msg?.toString())
+            writeln(msg)
         }
     }
+
+    private fun writeln(msg: Any?) = terminal.writer().write("${msg?.toString()}\n")
 }

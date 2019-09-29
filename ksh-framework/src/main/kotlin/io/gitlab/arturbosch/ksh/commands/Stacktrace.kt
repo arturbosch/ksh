@@ -4,7 +4,6 @@ import io.gitlab.arturbosch.ksh.api.BuiltinCommand
 import io.gitlab.arturbosch.ksh.api.Context
 import io.gitlab.arturbosch.ksh.api.ShellClass
 import io.gitlab.arturbosch.ksh.api.ShellMethod
-import io.gitlab.arturbosch.ksh.writeln
 import kotlin.properties.Delegates
 
 /**
@@ -21,6 +20,6 @@ class Stacktrace : ShellClass {
 
     @ShellMethod(help = "Prints the last error.")
     fun main() {
-        context.terminal.writeln(context.lastExceptionState)
+        context.writeln(context.lastExceptionState)
     }
 }
