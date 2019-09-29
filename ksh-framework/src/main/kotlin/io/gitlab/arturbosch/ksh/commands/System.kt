@@ -23,7 +23,7 @@ class System : ShellClass {
     @ShellMethod(help = "Prints the current time.")
     fun time(): String = LocalDateTime.now().toString()
 
-    @ShellMethod(help = "Lists all environment variables.")
+    @ShellMethod(help = "Lists environment variables.")
     fun env(
         @ShellOption(value = ["", "--name"], help = "Name of the environment variable to print.") name: String? = null
     ): String = if (name == null) {

@@ -39,5 +39,5 @@ class Runtime : ShellClass {
         return toTreeString(SimpleStringNode("Registered converters:", converterIds))
     }
 
-    private fun Converter<*>.identifier(): String = "${this::class.qualifiedName}=${id.qualifiedName}"
+    private fun Converter<*>.identifier(): String = "${this::class.java.name}=${id.java.name}"
 }
