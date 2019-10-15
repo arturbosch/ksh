@@ -20,10 +20,17 @@ interface Context : WithPriority {
     fun commands(): List<ShellClass>
 
     @JvmDefault
-    fun writeln(msg: String?) = terminal.writer().write(msg + "\n")
+    fun writeln(msg: String?) {
+        val writer = terminal.writer()
+        writer.write(msg + "\n")
+        writer.flush()
+    }
 
     @JvmDefault
-    fun writeln(error: Throwable?) = error?.printStackTrace(terminal.writer())
+    fun writeln(error: Throwable?) {
+        error?.printStackTrace(terminal.writer())
+        error?.let { terminal.writer().flush() }
+    }
 
     @JvmDefault
     fun readLine(prompt: String? = settings.prompt()): String? = reader.readLine(prompt)
