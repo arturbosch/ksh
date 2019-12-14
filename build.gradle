@@ -8,11 +8,11 @@ buildscript {
 }
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "5.1.0"
-    id 'com.github.ben-manes.versions' version '0.25.0'
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id 'com.github.ben-manes.versions' version '0.27.0'
     id "com.jfrog.bintray" version "1.8.4" apply false
     id "org.sonarqube" version "2.7.1"
-    id "io.gitlab.arturbosch.detekt" version "1.0.1"
+    id "io.gitlab.arturbosch.detekt" version "1.2.2"
 }
 
 repositories {
