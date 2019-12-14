@@ -9,9 +9,9 @@ repositories {
 }
 
 dependencies {
-    compile project(":ksh-framework")
-    compile project(":ksh-aliases")
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    implementation project(":ksh-framework")
+    implementation project(":ksh-aliases")
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     testImplementation project(":ksh-test")
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'

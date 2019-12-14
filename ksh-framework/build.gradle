@@ -4,10 +4,11 @@ apply plugin: 'com.github.johnrengelman.shadow'
 mainClassName = 'io.gitlab.arturbosch.ksh.MainKt'
 
 dependencies {
-    compile project(":ksh-api")
-    compile "org.jline:jline:$jlineVersion"
-    compile "io.gitlab.arturbosch:kutils:$kutilsVersion"
-    testCompile project(":ksh-test")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    api project(":ksh-api")
+    api "org.jline:jline:$jlineVersion"
+    api "io.gitlab.arturbosch:kutils:$kutilsVersion"
+    testImplementation project(":ksh-test")
 }
 
 ext.generatedResources = file("$buildDir/generated-resources")
