@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "com.github.johnrengelman.shadow" version "7.0.0"
     id 'com.github.ben-manes.versions' version '0.36.0'
     id "com.jfrog.bintray" version "1.8.5" apply false
     id "org.sonarqube" version "3.0"
